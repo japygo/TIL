@@ -3,5 +3,5 @@
 
 ---
 ## 목차
-- Markdown
-  - [사용법](./Markdown/markdown.md)
+- [Markdown](./Markdown/markdown.md)
+- [Git](./Git/git.md)
