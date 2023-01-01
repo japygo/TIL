@@ -28,4 +28,17 @@
 - 인덴트(indent, 들여쓰기) 깊이를 1단계로 유지한다.
 - else를 사용하지 마라.
 
-To be continued...
+## 2.4 테스트와 리팩토링을 통한 문자열 계산기 구현
+### 2.4.1 요구사항을 작은 단위로 나누기
+### 2.4.2 모든 단계의 끝은 리팩토링
+- 구현 -> 테스트를 통한 결과 확인 -> 리팩토링
+
+## 2.5 추가 학습 자료
+### 2.5.1 테스트 주도 개발(Test Driven Development)과 리팩토링
+- [테스트 주도 개발: 고품질 쾌속개발을 위한 TDD 실천법과 도구](https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/tddbook/TDD_PT.pdf) : TDD가 무엇인지, 등장 배경은 무엇이며, 어떤 효과가 있는지
+- [테스트 주도 개발](http://www.yes24.com/Product/Goods/12246033)(Kent Beck 저/김창준, 강규영 역, 인사이트/2004년)
+- [리팩토링 : 코드 품질을 개선하는 객체지향 사고법](http://www.yes24.com/Product/Goods/89649360)(마틴 파울러 저/김지원 역, 한빛미디어/2012년)
+
+### 2.5.2 정규 표현식
+- [손에 잡히는 정규 표현식](http://www.yes24.com/Product/Goods/3475120)(벤 포터 저/김경수 역, 인사이트(insight), 2009년)
+- http://regexr.com/
