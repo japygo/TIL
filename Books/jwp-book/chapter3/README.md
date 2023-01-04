@@ -105,3 +105,11 @@
    docker commit [컨테이너명] [새로 만들 이미지명]:[태그]
    docker run -it -p 8080:8080 [새로 만든 이미지명]:[태그]
    ```
+
+### 3.3.4 리눅스, 터미널과 친해지기
+- [리눅스 커맨드라인 완벽 입문서](http://www.yes24.com/Product/Goods/8208026)(윌리엄 E. 샤츠 주니어 저/이종우, 정영신 역, 비제이퍼블릭/2013년 1월)
+- [영어버전 무료 pdf](http://linuxcommand.org/tlcl.php)
+- https://youtu.be/JbH-xzD7IkE
+- [[특강] 크롬을 활용한 프론트엔드 디버깅](https://school.programmers.co.kr/learn/courses/7/7-%ED%8A%B9%EA%B0%95-%ED%81%AC%EB%A1%AC%EC%9D%84-%ED%99%9C%EC%9A%A9%ED%95%9C-%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C-%EB%94%94%EB%B2%84%EA%B9%85) : 넥스트에서 웹 UI 전공을 담당했던 윤지수님의 강의
+
+To be continued...
