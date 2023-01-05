@@ -112,4 +112,12 @@
 - https://youtu.be/JbH-xzD7IkE
 - [[특강] 크롬을 활용한 프론트엔드 디버깅](https://school.programmers.co.kr/learn/courses/7/7-%ED%8A%B9%EA%B0%95-%ED%81%AC%EB%A1%AC%EC%9D%84-%ED%99%9C%EC%9A%A9%ED%95%9C-%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C-%EB%94%94%EB%B2%84%EA%B9%85) : 넥스트에서 웹 UI 전공을 담당했던 윤지수님의 강의
 
+## 3.4 웹 서버 실습
+
+### 3.4.3 실습 요구사항
+
+#### 3.4.3.1 요구사항 1 - index.html 응답하기
+http://localhost:8080/index.html 로 접속했을 때 webapp 디렉토리의 index.html 파일을 읽어 클라이언트에 응답한다.
+
+
 To be continued...
