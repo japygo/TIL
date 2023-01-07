@@ -124,4 +124,10 @@
 - 회원가입을 하면 다음과 같은 형태로 사용자가 입력한 값이 서버에 전달된다.  
 /user/create?userId=javajigi&password=password&name=JaeSung&email=javajigi%40slipp.net
 
+#### 3.4.3.3 요구사항 3 - POST 방식으로 회원가입하기
+- http://localhost:8080/user/form.html 파일의 form 태그 method를 get에서 post로 수정한 후 회원가입이 정상적으로 동작하도록 구현한다.
+
+#### 3.4.3.4 요구사항 4 - 302 status code 적용
+- "회원가입"을 완료하면 /index.html 페이지로 이동하고 싶다.
+
 To be continued...
