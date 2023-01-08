@@ -130,4 +130,8 @@
 #### 3.4.3.4 요구사항 4 - 302 status code 적용
 - "회원가입"을 완료하면 /index.html 페이지로 이동하고 싶다.
 
+#### 3.4.3.5 요구사항 5 - 로그인하기
+- "로그인" 메뉴를 클릭하면 http://localhost:8080/user/login.html 으로 이동하고 로그인이 성공하면 /index.html로 이동하고, 로그인이 실패하면 /user/login_failed.html로 이동해야 한다.
+- 로그인이 성공할 경우 요청 헤더의 Cookie 헤더 값이 logined=true, 로그인이 실패하면 Cookie 헤더 값이 logined=false로 전달되어야 한다.
+
 To be continued...
