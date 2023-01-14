@@ -39,5 +39,16 @@ Content-Length: 20
 
 상태 라인은 "HTTP-버전 상태코드 응답구문"으로 구성되어 있다. HTTP 버전은 HTTP 요청 라인의 HTTP 버전과 같은 의미이다. 상태코드는 응답에 대한 상태를 의미하는 코드 값으로 200은 성공을 의미한다. 응답 구문은 응답 상태에 대한 설명이다.
 
+#### 4.2.1.2 요구사항 2 - GET 방식으로 회원가입하기
+
+```text
+GET /user/create?userId=javajigi&password=password&name=jaesung&email=javajigi%40slipp.net HTTP/1.1
+```
+
+요청 라인의 "GET"은 form 태그 method 속성 값이고, 요청 URI는 action 속성 값(/user/create)이다.
+GET 메소드 방식으로 요청을 보낼 경우 사용자가 입력한 값을 물음표 뒤에 `매개변수명1=값1&매개변수명2=값2` 형식으로 전송한다.
+
+"/user/create"는 요청 자원의 위치를 나타내는 `경로(path)`라 부르고, 물음표 뒤에 전달되는 매개변수를 `쿼리 스트링(query string)`이라고 부른다.
+
 
 To be continued...
