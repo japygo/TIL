@@ -97,4 +97,23 @@ HTTP는 로그인과 같이 클라이언트의 행위를 기억하기 위한 목
 이 같은 단점을 보완하기 위해 세션이 등장했다. 세션 또한 쿠키를 기반으로 하는 것은 같다.
 단, 좀 더 보안을 강화하기 위한 방법으로 상태 데이터를 서버에 저장한다는 것만 다르다.
 
-To be continued...
+#### 4.2.1.7 요구사항 7 - CSS 지원하기
+
+브라우저는 응답을 받은 후 Content-Type 헤더 값을 통해 응답 본문에 포함되어 있는 컨텐츠가 어떤 컨텐츠인지를 판단한다.
+
+각 요청과 응답 헤더는 각 요청과 응답이 포함하고 있는 본문 컨텐츠에 대한 정보를 제공하고 있다. 이와 같이 데이터에 대한 정보를 포함하고 있는 헤더 정보들을 `메타데이터`라고 부른다.
+
+- https://youtu.be/VeTjDYl7UVs: 이클립스 또는 터미널에서 브랜치 변경 방법
+
+## 4.3 추가 학습 자료
+
+### 4.3.1 HTTP
+
+- [HTTP (HyperText Transfer Protocol)](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/HTTP_Basics.html)
+- [프로가 되기 위한 웹 기술 입문](http://www.yes24.com/Product/Goods/6721651)(고모리 유스케 저/김정환 역, 위키북스/2012)
+- [HTTP & Network : 그림으로 배우는 책으로 학습](http://www.yes24.com/Product/Goods/15894097)(우에노 센 저/이병억 역, 영진닷컴/2015)
+- [HTTP 완벽 가이드](http://www.yes24.com/Product/Goods/15381085)(데이빗 고울리,브라이언 토티,마조리 세이어,세일루 레디,안슈 아가왈 공저/이응준,정상일 공역, 인사이트(insight)/2014)
+
+### 4.3.2 네트워크
+
+- [성공과 실패를 결정하는 1%의 네트워크 원리](http://www.yes24.com/Product/Goods/90640081)(Tsutomu Tone 저/이도희 역/이중호 감역, 성안당/2015)
