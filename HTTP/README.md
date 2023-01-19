@@ -106,4 +106,191 @@ HTTP 서버는 설정에 지정된 IP 주소(들)와 포트(들)로 수신되는
 요청이 도착하면 서버는 메시지 헤더를 분석하고, 설정에 지정된 규칙을 적용하고, 적절한 작업을 수행합니다.
 웹마스터의 웹 서버 작업에 대한 주요 제어는 설정에 의해 이루어지며, 이는 나중의 섹션에서 자세히 설명됩니다.
 
+### HTTP over TCP/IP
+
+HTTP는 클라이언트-서버 응용 계층 프로토콜입니다. 그것은 일반적으로 TCP/IP 연결 위에서 실행됩니다. (HTTP는 TCP/IP 상에서만 실행될 필요는 없습니다. 그것은 단지 신뢰성 있는 전송을 가정합니다. 이러한 보장을 제공하는 전송 프로토콜은 사용할 수 있습니다.)
+
+![HTTP_OverTCPIP](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/images/HTTP_OverTCPIP.png)
+
+TCP/IP(Transmission Control Protocol/Internet Protocol)는 네트워크를 통해 컴퓨터 간에 통신하기 위한 전송계층과 네트워크 계층 프로토콜의 집합입니다.
+
+IP(Internet Protocol)는 네트워크 계층 프로토콜로, 네트워크 주소와 라우팅에 관련됩니다.
+IP 네트워크에서는 각 머신에 고유한 IP 주소(예: 165.1.2.3)가 할당되며, IP 소프트웨어는 소스 IP에서 대상 IP로 메시지를 라우팅하는 일을 담당합니다.
+IPv4(IP 버전 4)에서 IP 주소는 4바이트로 구성되며, 각 바이트는 0~255의 범위를 가지며, 점으로 구분되며, 이를 쿼드-도트 형식이라고 합니다.
+이 네이밍 스키마는 네트워크상에서 4G 주소까지 지원합니다.
+최신 IPv6(IP 버전 6)은 더 많은 주소를 지원합니다.
+대부분의 사람들에게 숫자를 기억하기 어렵기 때문에, www.nowhere123.com 같은 영어 같은 도메인 이름을 사용합니다.
+DNS(도메인 이름 서비스)는 도메인 이름을 IP 주소로 변환합니다(분산된 조회 테이블을 통해).
+특수 IP 주소 127.0.0.1은 항상 자신의 머신을 가리킵니다.
+그 도메인 이름은 "localhost"이며, 로컬 루프백 테스팅에 사용할 수 있습니다.
+
+TCP(Transmission Control Protocol)는 전송 계층 프로토콜로, 두 머신 간의 연결을 설정하는 일을 담당합니다.
+TCP는 2가지 프로토콜로 구성되어 있습니다: TCP와 UDP(User Datagram Package).
+TCP는 신뢰성이 있으며, 각 패킷에는 시퀀스 번호가 있으며, 응답을 기대합니다.
+수신자가 받지 못한 패킷은 재전송됩니다. TCP는 패킷 전달을 보장합니다.
+UDP는 패킷 전달을 보장하지 않으므로 신뢰성이 없습니다.
+그러나 UDP는 네트워크 오버헤드가 적어서 비디오와 오디오 스트리밍과 같은 응용 프로그램에서는 신뢰성이 중요하지 않은 경우에 사용될 수 있습니다.
+
+TCP는 IP 머신 내에서 응용 프로그램을 멀티플렉싱합니다.
+각 IP 머신당 TCP는 (65536개의 포트나 소켓) 지원하며, 0번 포트부터 65535번 포트까지 있습니다.
+응용 프로그램, 예를 들어 HTTP나 FTP,은 특정 포트 번호에서 수신 요청을 기다립니다.
+포트 0부터 1023번은 인기있는 프로토콜에 사전 할당되어 있습니다.
+예를들면 HTTP가 80번, FTP가 21번, Telnet이 23번, SMTP가 25번, NNTP가 119번, DNS가 53번입니다.
+포트 1024번 이상은 사용자에게 사용 가능합니다.
+
+포트 80번이 HTTP에 할당되어 있지만, 기본 HTTP 포트 번호라는 것은 다른 사용자가 지정한 포트 번호 (1024-65535)를 사용하여 HTTP 서버를 실행하는 것을 금지하지 않습니다.
+예를 들어 8000번, 8080번은 테스트 서버에서 사용할 수 있습니다.
+같은 머신에서 다른 포트 번호로 여러 HTTP 서버를 실행할 수도 있습니다.
+클라이언트가 URL을 요청할 때 포트 번호를 명시적으로 지정하지 않는다면, 예를 들어 http://www.nowhere123.com/docs/index.html, 브라우저는 호스트 www.nowhere123.com의 기본 포트 번호 80에 연결합니다.
+하지만 서버가 8000번 포트에서 대기하고 있지 않고 기본 포트 80에서 대기하고 있다면 URL에 포트 번호를 명시적으로 지정해야 합니다.
+예를들면 http://www.nowhere123.com:8000/docs/index.html
+
+간단히 말하면, TCP/IP를 통해 통신하려면 (a) IP 주소 또는 호스트 이름 (b) 포트 번호를 알아야 합니다.
+
+### HTTP 사양
+
+HTTP 사양은 [W3C (World-wide Web Consortium)](https://www.w3.org/)에서 관리하며 http://www.w3.org/standards/techs/http 에서 사용 가능합니다.
+현재 HTTP/1.0과 HTTP/1.1이 두 가지 버전이 있습니다.
+원래 버전인 HTTP/0.9 (1991)는 Tim Berners-Lee가 작성한 Internet을 건너 원시 데이터를 전송하는 간단한 프로토콜입니다.
+HTTP/1.0 (1996)는 MIME 같은 메시지를 허용하여 프로토콜을 개선했습니다.(RFC 1945에 정의됨)
+HTTP/1.0은 프록시, 캐싱, 지속적인 연결, 가상 호스트, 및 범위 다운로드 문제를 해결하지 않습니다.
+이러한 기능은 HTTP/1.1 (1999)에서 제공되었습니다.(RFC 2616에 정의됨)
+
+## Apache HTTP 서버 또는 Apache Tomcat 서버
+
+---
+
+HTTP 프로토콜을 연구하려면 HTTP 서버 (예 : Apache HTTP 서버 또는 Apache Tomcat 서버)가 필요합니다.
+
+Apache HTTP 서버는 산업 규모의 생산 서버로서 인기가 많습니다.
+Apache Software Foundation (ASF)에서 생산하며 www.apache.org 에서 제공됩니다.
+ASF는 오픈 소스 소프트웨어 재단입니다. 즉, Apache HTTP 서버는 소스 코드와 함께 무료로 제공됩니다.
+
+첫 번째 HTTP 서버는 Tim Berners-Lee가 작성하였으며 제네바의 유럽 원자력 연구 센터(CERN)에서 HTML을 발명했습니다.
+Apache는 1995년 초에 NCSA (미국 과학 계산 응용 센터)의 "httpd 1.3" 서버를 기반으로 개발되었습니다.
+Apache는 이전 NCSA httpd 웹 서버의 일부 코드와 패치를 포함하기 때문에 이름을 얻었다고 생각되거나, 미국 원주민 인디언 전쟁에서 유명한 인디언 족의 이름에서 유래한 것으로 추측됩니다.
+
+[Apache How-to](https://www3.ntu.edu.sg/home/ehchua/programming/howto/Apache_HowToInstall.html)를 읽어보면 Apache HTTP 서버를 설치하고 구성하는 방법을 알 수 있습니다.
+또는 [Tomcat How-to](https://www3.ntu.edu.sg/home/ehchua/programming/howto/Tomcat_HowTo.html)를 읽어보면 Apache Tomcat 서버를 설치하고 시작하는 방법을 알 수 있습니다.
+
+## HTTP 요청 및 응답 메시지
+
+---
+
+HTTP 클라이언트와 서버는 텍스트 메시지를 전송하여 통신합니다.
+클라이언트는 서버에 요청 메시지를 보냅니다.
+그리고 서버는 응답 메시지를 반환합니다.
+
+HTTP 메시지는 메시지 헤더와 선택적인 메시지 바디로 구성되어 있으며, 공백 라인으로 구분됩니다.
+아래와 같이 구성됩니다.
+
+![HTTP_MessageFormat](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/images/HTTP_MessageFormat.png)
+
+### HTTP 요청 메시지
+
+HTTP 요청 메시지의 형식은 다음과 같습니다:
+
+![HTTP_RequestMessage](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/images/HTTP_RequestMessage.png)
+
+#### 요청 라인
+
+헤더의 첫번째 줄은 요청 라인이라고 불리며, 선택적 요청 헤더가 따라옵니다.
+
+요청 라인은 다음과 같은 구문을 가집니다:
+
+```text
+request-method-name request-URI HTTP-version
+```
+
+- 요청 메소드 이름: HTTP 프로토콜은 GET, POST, HEAD, OPTIONS와 같은 요청 메소드 세트를 정의합니다.
+  클라이언트는 이들 중 하나의 메소드를 사용하여 서버로 요청을 보낼 수 있습니다.
+- 요청 URI: 요청된 리소스를 지정합니다.
+- HTTP 버전: 현재는 HTTP/1.0과 HTTP/1.1이 사용되고 있습니다.
+
+요청 라인의 예는 다음과 같습니다:
+
+```text
+GET /test.html HTTP/1.1
+HEAD /query.html HTTP/1.0
+POST /index.html HTTP/1.1
+```
+
+#### 요청 헤더
+
+요청 헤더는 이름:값 쌍의 형식으로 작성됩니다.
+하나의 이름에 여러 값을 쉼표로 구분하여 지정할 수 있습니다.
+
+```text
+request-header-name: request-header-value1, request-header-value2, ...
+```
+
+요청 헤더 예는 다음과 같습니다.
+
+```text
+Host: www.xyz.com
+Connection: Keep-Alive
+Accept: image/gif, image/jpeg, */*
+Accept-Language: us-en, fr, cn
+```
+
+#### 예시
+
+다음은 샘플 HTTP 요청 메시지를 보여줍니다:
+
+![HTTP_RequestMessageExample](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/images/HTTP_RequestMessageExample.png)
+
+### HTTP 응답 메시지
+
+HTTP 응답 메시지의 형식은 다음과 같습니다:
+
+![HTTP_ResponseMessage](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/images/HTTP_ResponseMessage.png)
+
+#### 상태 라인
+
+첫번째 줄은 상태 라인이라고 불리며, 선택적 응답 헤더가 따라옵니다.
+
+상태 라인은 다음 구문을 가지고 있습니다.
+
+```text
+HTTP-version status-code reason-phrase
+```
+
+- HTTP 버전: 이 세션에서 사용된 HTTP 버전. HTTP/1.0 또는 HTTP/1.1 중 하나.
+- 상태 코드: 서버에서 생성한 요청 결과를 반영하는 3자리 숫자.
+- 이유 구문: 상태 코드에 대한 간단한 설명.
+- 일반적인 상태 코드와 이유 구문은 "200 OK", "404 Not Found", "403 Forbidden", "500 Internal Server Error" 입니다.
+
+상태 라인의 예는 다음과 같습니다.
+
+```text
+HTTP/1.1 200 OK
+HTTP/1.0 404 Not Found
+HTTP/1.1 403 Forbidden
+```
+
+#### 응답 헤더
+
+응답 헤더는 이름:값 쌍의 형식입니다.
+
+```text
+response-header-name: response-header-value1, response-header-value2, ...
+```
+
+응답 헤더의 예는 다음과 같습니다.
+
+```text
+Content-Type: text/html
+Content-Length: 35
+Connection: Keep-Alive
+Keep-Alive: timeout=15, max=100
+```
+
+응답 메시지 바디는 요청한 리소스 데이터를 포함합니다.
+
+#### 예시
+
+아래는 샘플 응답 메시지를 보여줍니다.
+
+![HTTP_ResponseMessageExample](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/images/HTTP_ResponseMessageExample.png)
+
 To be continued...
