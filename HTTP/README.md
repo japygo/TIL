@@ -293,4 +293,201 @@ Keep-Alive: timeout=15, max=100
 
 ![HTTP_ResponseMessageExample](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/images/HTTP_ResponseMessageExample.png)
 
+## HTTP 요청 메소드
+
+---
+
+HTTP 프로토콜은 요청 메소드의 세트를 정의합니다.
+클라이언트는 이러한 요청 메소드 중 하나를 사용하여 HTTP 서버에 요청 메시지를 보낼 수 있습니다.
+이 메소드들은 다음과 같습니다:
+
+- GET: 클라이언트는 GET 요청을 사용하여 서버에서 웹 리소스를 가져올 수 있습니다.
+- HEAD: 클라이언트는 HEAD 요청을 사용하여 GET 요청이 가져온 헤더를 가져올 수 있습니다.
+  헤더에는 데이터의 최종 수정 날짜가 포함되어 있기 때문에 이를 사용하여 로컬 캐시 복사본과 비교할 수 있습니다.
+- POST: 웹 서버로 데이터를 전송하는 데 사용됩니다.
+- PUT: 서버에 데이터를 저장하도록 요청합니다.
+- DELETE: 서버에게 데이터를 삭제하라고 요청합니다.
+- TRACE: 서버에게 자신이 취하는 조치의 진단 추적을 반환하라는 요청을 합니다.
+- OPTIONS: 서버에게 지원하는 요청 메소드의 목록을 반환하라는 요청을 합니다.
+- CONNECT: 프록시가 다른 호스트에 연결하고 그냥 컨텐츠를 답으로 보내도록 요청하는 메소드입니다.
+  이는 대개 프록시를 통한 SSL 연결을 만드는 데 사용됩니다.
+- 다른 확장 메소드들.
+
+## GET 요청 메소드
+
+---
+
+GET 요청 메소드는 가장 일반적인 HTTP 요청 메소드입니다.
+클라이언트는 GET 요청 메소드를 사용하여 HTTP 서버에서 리소스를 요청(혹은 "가져오기") 할 수 있습니다.
+GET 요청 메시지는 다음 구문을 가집니다:
+
+```text
+GET request-URI HTTP-version
+(optional request headers)
+(blank line)
+(optional request body)
+```
+
+- GET 키워드는 대소문자를 구분하며, 반드시 대문자로 작성해야 합니다.
+- 요청 URI : 요청한 리소스의 경로를 지정하며, 문서 기본 디렉토리의 루트 "/"에서 시작해야 합니다.
+- HTTP 버전 : HTTP/1.0 또는 HTTP/1.1 중 하나입니다.
+  이 클라이언트는 현재 세션에 사용할 프로토콜을 협상합니다.
+  예를 들어, 클라이언트가 HTTP/1.1을 요청할 수 있습니다.
+  서버가 HTTP/1.1을 지원하지 않는 경우, 응답에서 HTTP/1.0을 사용하도록 클라이언트에 알려줄 수 있습니다.
+- 클라이언트는 선택적 요청 헤더 (예: Accept, Accept-Language 등)를 사용하여 서버와 협상하고 서버가 선호하는 콘텐츠 (예: 클라이언트가 선호하는 언어로)를 전달하도록 요청합니다.
+- GET 요청 메시지는 선택적 요청 바디를 가지며 쿼리 문자열 (나중에 설명할)을 포함합니다.
+
+### HTTP 요청 테스트
+
+HTTP 요청을 테스트하는 방법은 많습니다.
+"telnet" 또는 "hyperterm"과 같은 유틸리티 프로그램을 사용할 수 있거나, c:\windows 하위에서 "telnet.exe" 또는 "hypertrm.exe"를 검색하거나, 자체 네트워크 프로그램을 작성하여 원시 요청 메시지를 HTTP 서버로 전송하여 다양한 HTTP 요청을 테스트 할 수 있습니다.
+
+#### Telnet
+
+"Telnet"은 매우 유용한 네트워킹 유틸리티입니다.
+Telnet을 사용하면 서버와 TCP 연결을 설정할 수 있으며, 원시 HTTP 요청을 보낼 수 있습니다.
+예를 들어, 로컬호스트 (IP 주소 127.0.0.1)에서 8000번 포트에서 HTTP 서버를 시작했다고 가정합니다.
+
+```text
+> telnet
+telnet> help
+... telnet help menu ...
+telnet> open 127.0.0.1 8000
+Connecting To 127.0.0.1...
+GET /index.html HTTP/1.0
+(Hit enter twice to send the terminating blank line ...)
+... HTTP response message ...
+```
+
+Telnet은 문자 기반 프로토콜입니다.
+Telnet 클라이언트에서 입력한 각 문자는 즉시 서버로 전송됩니다.
+따라서 원시 명령을 입력할 때 오타를 만들 수 없으며, 삭제와 백스페이스는 서버로 전송됩니다.
+입력한 문자를 보려면 "local echo" 옵션을 사용해야 할 수도 있습니다.
+Telnet 매뉴얼(Windows의 도움말 검색)을 참조하여 Telnet 사용법을 자세히 알아보세요.
+
+#### 네트워크 프로그램
+
+HTTP 서버로 원시 HTTP 요청을 보내는 것도 가능합니다.
+네트워크 프로그램은 먼저 서버와 TCP/IP 연결을 설정해야 합니다.
+TCP 연결이 설정되면 원시 요청을 전송할 수 있습니다.
+
+예를 들어, Java로 작성된 네트워크 프로그램 예제는 다음과 같습니다. (HTTP 서버가 로컬호스트 (IP 주소 127.0.0.1)에서 8000번 포트에서 실행된다고 가정합니다):
+
+```java
+import java.net.*;
+import java.io.*;
+   
+public class HttpClient {
+   public static void main(String[] args) throws IOException {
+      // The host and port to be connected.
+      String host = "127.0.0.1";
+      int port = 8000;
+      // Create a TCP socket and connect to the host:port.
+      Socket socket = new Socket(host, port);
+      // Create the input and output streams for the network socket.
+      BufferedReader in
+         = new BufferedReader(
+              new InputStreamReader(socket.getInputStream()));
+      PrintWriter out
+         = new PrintWriter(socket.getOutputStream(), true);
+      // Send request to the HTTP server.
+      out.println("GET /index.html HTTP/1.0");
+      out.println();   // blank line separating header & body
+      out.flush();
+      // Read the response and display on console.
+      String line;
+      // readLine() returns null if server close the network socket.
+      while((line = in.readLine()) != null) {
+         System.out.println(line);
+      }
+      // Close the I/O streams.
+      in.close();
+      out.close();
+   }
+}
+```
+
+### HTTP/1.0 GET 요청
+
+다음은 HTTP/1.0 GET 요청의 응답(telnet 또는 자체 네트워크 프로그램을 통해 발신한 것 - HTTP 서버를 시작했다고 가정) 입니다.
+
+```text
+GET /index.html HTTP/1.0
+(enter twice to create a blank line)
+```
+
+```text
+HTTP/1.1 200 OK
+Date: Sun, 18 Oct 2009 08:56:53 GMT
+Server: Apache/2.2.14 (Win32)
+Last-Modified: Sat, 20 Nov 2004 07:16:26 GMT
+ETag: "10000000565a5-2c-3e94b66c2e680"
+Accept-Ranges: bytes
+Content-Length: 44
+Connection: close
+Content-Type: text/html
+X-Pad: avoid browser bug
+   
+<html><body><h1>It works!</h1></body></html>
+   
+Connection to host lost.
+```
+
+이 예제에서는 클라이언트는 "/index.html" 이라는 이름의 문서를 요청하는 GET 요청을 보내고 HTTP/1.0 프로토콜을 사용하도록 협상합니다.
+요청 헤더 뒤에는 빈 줄이 필요합니다.
+이 요청 메시지는 바디를 포함하지 않습니다.
+
+서버는 요청 메시지를 수신하여 요청 URI를 서버의 문서 디렉토리에 있는 문서로 매핑합니다.
+요청된 문서가 사용 가능한 경우 서버는 "200 OK"라는 응답 상태 코드와 함께 문서를 반환합니다.
+응답 헤더는 반환된 문서에 대한 필수 설명을 제공하며, 예를 들어 최종 수정 날짜(Last-Modified), MIME 유형(Content-Type), 문서 길이(Content-Length)와 같은 정보를 포함합니다.
+응답 바디는 요청된 문서를 포함합니다.
+브라우저는 미디어 유형(예: Plain-text, HTML, JPEG, GIF 등)과 응답 헤더에서 얻은 기타 정보에 따라 문서의 형식을 지정하고 표시합니다.
+
+참고:
+- 요청 메소드 이름 "GET"은 대소문자를 구분하며 반드시 대문자로 입력해야 합니다.
+- 요청 메소드 이름이 잘못 입력되면 서버는 "501 Method Not Implemented"라는 오류 메시지를 반환합니다.
+- 요청 메소드 이름이 허용되지 않으면 서버는 "405 Method Not Allowed"라는 오류 메시지를 반환합니다.
+  예를 들어 DELETE는 유효한 메소드 이름이지만 서버에서 허용되지 않을 수 있습니다.
+- 요청 URI가 존재하지 않으면 서버는 "404 Not Found"라는 오류 메시지를 반환합니다.
+  요청 URI는 문서 기본 디렉토리의 루트 "/"에서 시작하도록 제대로 작성해야 합니다.
+  그렇지 않으면 서버는 "400 Bad Request"라는 오류 메시지를 반환합니다.
+- HTTP 버전이 누락되거나 잘못되면 서버는 "400 Bad Request"라는 오류 메시지를 반환합니다.
+- HTTP/1.0에서는 기본적으로 서버는 응답을 전송 후 TCP 연결을 끊습니다.
+  Telnet을 사용해 서버에 연결하면 응답 바디를 받은 즉시 "Connection to host lost"라는 메시지가 표시됩니다.
+  "Connection: Keep-Alive"라는 선택적 요청 헤더를 사용하여 지속적인(또는 Keep-Alive) 연결을 요청하여 동일한 TCP 연결을 통해 다른 요청을 전송하여 네트워크 효율을 높일 수 있습니다.
+  반면에 HTTP/1.1은 기본적으로 Keep-Alive 연결을 사용합니다.
+
+### 응답 상태 코드
+
+응답 메시지의 첫 번째 줄(즉, 상태 행)에는 서버가 요청 결과를 나타내는 응답 상태 코드가 포함됩니다.
+
+응답 상태 코드는 3 자리 숫자입니다:
+- 1xx (정보) : 요청이 수신되었으며 서버는 처리를 계속 진행합니다.
+- 2xx (성공) : 요청이 성공적으로 수신, 이해, 수락 및 서비스되었습니다.
+- 3xx (리다이렉션) : 요청을 완료하기 위해 더 이상의 조치가 필요합니다.
+- 4xx (클라이언트 오류) : 요청에 문법 오류가 포함되어 이해할 수 없습니다.
+- 5xx (서버 오류) : 서버가 유효한 요청을 수행하지 못했습니다.
+
+일반적으로 만나는 상태 코드:
+- 100 Continue: 서버가 요청을 받았으며 응답을 준비 중입니다.
+- 200 OK: 요청이 완료되었습니다.
+- 301 Move Permanently: 요청한 리소스가 새 위치로 영구적으로 이동되었습니다.
+  새 위치의 URL은 응답 헤더인 Location에 제공됩니다.
+  클라이언트는 새 위치로 새로운 요청을 해야합니다.
+  응용 프로그램은 이 새로운 위치의 모든 참조를 업데이트해야합니다.
+- 302 Found & Redirect (or Move Temporarily):
+- 304 Not Modified:
+- 400 Bad Request:
+- 401 Authentication Required:
+- 403 Forbidden:
+- 404 Not Found:
+- 405 Method Not Allowed:
+- 408 Request Timeout:
+- 414 Request URI too Large:
+- 500 Internal Server Error:
+- 501 Method Not Implemented:
+- 502 Bad Gateway:
+- 503 Service Unavailable:
+- 504 Gateway Timeout:
+
 To be continued...
