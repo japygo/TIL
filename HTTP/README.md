@@ -334,7 +334,7 @@ GET request-URI HTTP-version
   이 클라이언트는 현재 세션에 사용할 프로토콜을 협상합니다.
   예를 들어, 클라이언트가 HTTP/1.1을 요청할 수 있습니다.
   서버가 HTTP/1.1을 지원하지 않는 경우, 응답에서 HTTP/1.0을 사용하도록 클라이언트에 알려줄 수 있습니다.
-- 클라이언트는 선택적 요청 헤더 (예: Accept, Accept-Language 등)를 사용하여 서버와 협상하고 서버가 선호하는 콘텐츠 (예: 클라이언트가 선호하는 언어로)를 전달하도록 요청합니다.
+- 클라이언트는 선택적 요청 헤더 (예: `Accept`, `Accept-Language` 등)를 사용하여 서버와 협상하고 서버가 선호하는 콘텐츠 (예: 클라이언트가 선호하는 언어로)를 전달하도록 요청합니다.
 - GET 요청 메시지는 선택적 요청 바디를 가지며 쿼리 문자열 (나중에 설명할)을 포함합니다.
 
 ### HTTP 요청 테스트
@@ -439,7 +439,7 @@ Connection to host lost.
 
 서버는 요청 메시지를 수신하여 요청 URI를 서버의 문서 디렉토리에 있는 문서로 매핑합니다.
 요청된 문서가 사용 가능한 경우 서버는 "200 OK"라는 응답 상태 코드와 함께 문서를 반환합니다.
-응답 헤더는 반환된 문서에 대한 필수 설명을 제공하며, 예를 들어 최종 수정 날짜(Last-Modified), MIME 유형(Content-Type), 문서 길이(Content-Length)와 같은 정보를 포함합니다.
+응답 헤더는 반환된 문서에 대한 필수 설명을 제공하며, 예를 들어 최종 수정 날짜(`Last-Modified`), MIME 유형(`Content-Type`), 문서 길이(`Content-Length`)와 같은 정보를 포함합니다.
 응답 바디는 요청된 문서를 포함합니다.
 브라우저는 미디어 유형(예: Plain-text, HTML, JPEG, GIF 등)과 응답 헤더에서 얻은 기타 정보에 따라 문서의 형식을 지정하고 표시합니다.
 
@@ -454,7 +454,7 @@ Connection to host lost.
 - HTTP 버전이 누락되거나 잘못되면 서버는 "400 Bad Request"라는 오류 메시지를 반환합니다.
 - HTTP/1.0에서는 기본적으로 서버는 응답을 전송 후 TCP 연결을 끊습니다.
   Telnet을 사용해 서버에 연결하면 응답 바디를 받은 즉시 "Connection to host lost"라는 메시지가 표시됩니다.
-  "Connection: Keep-Alive"라는 선택적 요청 헤더를 사용하여 지속적인(또는 Keep-Alive) 연결을 요청하여 동일한 TCP 연결을 통해 다른 요청을 전송하여 네트워크 효율을 높일 수 있습니다.
+  "Connection: Keep-Alive"라는 선택적 요청 헤더를 사용하여 지속적인(또는 `Keep-Alive`) 연결을 요청하여 동일한 TCP 연결을 통해 다른 요청을 전송하여 네트워크 효율을 높일 수 있습니다.
   반면에 HTTP/1.1은 기본적으로 Keep-Alive 연결을 사용합니다.
 
 ### 응답 상태 코드
@@ -472,22 +472,437 @@ Connection to host lost.
 - 100 Continue: 서버가 요청을 받았으며 응답을 준비 중입니다.
 - 200 OK: 요청이 완료되었습니다.
 - 301 Move Permanently: 요청한 리소스가 새 위치로 영구적으로 이동되었습니다.
-  새 위치의 URL은 응답 헤더인 Location에 제공됩니다.
+  새 위치의 URL은 응답 헤더인 `Location`에 제공됩니다.
   클라이언트는 새 위치로 새로운 요청을 해야합니다.
   응용 프로그램은 이 새로운 위치의 모든 참조를 업데이트해야합니다.
-- 302 Found & Redirect (or Move Temporarily):
-- 304 Not Modified:
-- 400 Bad Request:
-- 401 Authentication Required:
-- 403 Forbidden:
-- 404 Not Found:
-- 405 Method Not Allowed:
+- 302 Found & Redirect (or Move Temporarily): 301과 동일하지만 새 위치는 일시적인 성격입니다.
+  클라이언트는 새 요청을 해야하지만 응용 프로그램은 참조를 업데이트할 필요가 없습니다.
+- 304 Not Modified: `If-Modified-Since` 조건부 GET 요청에 대한 응답으로, 서버는 요청한 리소스가 수정되지 않았다는 것을 알려줍니다.
+- 400 Bad Request: 서버가 요청을 해석하거나 이해할 수 없어, 요청 메시지에 구문 오류가 있을 것입니다.
+- 401 Authentication Required: 요청한 리소스는 보호되어 있고, 클라이언트의 자격 증명(사용자 이름/비밀번호)이 필요합니다.
+  클라이언트는 자신의 자격 증명(사용자 이름/비밀번호)과 함께 요청을 다시 제출해야 합니다.
+- 403 Forbidden: 서버는 클라이언트의 ID와 관계없이 리소스를 공급하지 않습니다.
+- 404 Not Found: 서버에서 요청한 리소스를 찾을 수 없습니다.
+- 405 Method Not Allowed: 사용된 요청 메소드(예를 들어 POST, PUT, DELETE)는 유효한 메소드입니다.
+  그러나 서버는 요청된 리소스에 대해 그 메소드를 허용하지 않습니다.
 - 408 Request Timeout:
 - 414 Request URI too Large:
-- 500 Internal Server Error:
-- 501 Method Not Implemented:
-- 502 Bad Gateway:
-- 503 Service Unavailable:
-- 504 Gateway Timeout:
+- 500 Internal Server Error: 서버가 혼란스러워서 요청에 대한 응답을 할 수 없습니다. 서버 측 프로그램에서 발생한 오류가 일반적입니다.
+- 501 Method Not Implemented: 사용한 요청 방법이 잘못되었습니다(예를 들어 "GET"을 "Get"으로 잘못 입력한 경우).
+- 502 Bad Gateway: 프록시 또는 게이트웨이가 업스트림 서버로부터 잘못된 응답을 받았다는 것을 나타냅니다.
+- 503 Service Unavailable: 서버는 과부하 또는 유지 보수 때문에 응답할 수 없습니다. 클라이언트는 나중에 다시 시도할 수 있습니다.
+- 504 Gateway Timeout: 프록시 또는 게이트웨이는 업스트림 서버로부터 타임 아웃을 받았음을 나타냅니다.
+
+### 더 많은 HTTP/1.0 GET 요청 예제
+
+#### 예: 맞춤법 오류 요청 메소드
+
+요청에서 "GET"이라는 메소드 이름이 잘못 입력되어 "get"으로 입력되었을 경우,
+서버는 "501 Method Not Implemented" 오류를 반환합니다.
+이때 "`Allow`"라는 응답 헤더는 클라이언트에게 허용된 메소드를 알려줍니다.
+
+```text
+get /test.html HTTP/1.0
+(enter twice to create a blank line)
+```
+
+```text
+HTTP/1.1 501 Method Not Implemented
+Date: Sun, 18 Oct 2009 10:32:05 GMT
+Server: Apache/2.2.14 (Win32)
+Allow: GET,HEAD,POST,OPTIONS,TRACE
+Content-Length: 215
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>501 Method Not Implemented</title>
+</head><body>
+<h1>Method Not Implemented</h1>
+<p>get to /index.html not supported.<br />
+</p>
+</body></html>
+```
+
+#### 예: 404 File Not Found
+
+이 GET 요청에서 요청 URL "/t.html"는 서버의 문서 디렉터리에서 찾을 수 없습니다.
+서버는 "404 Not Found" 오류를 반환합니다.
+
+```text
+GET /t.html HTTP/1.0
+(enter twice to create a blank line)
+```
+
+```text
+HTTP/1.1 404 Not Found
+Date: Sun, 18 Oct 2009 10:36:20 GMT
+Server: Apache/2.2.14 (Win32)
+Content-Length: 204
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL /t.html was not found on this server.</p>
+</body></html>
+```
+
+#### 예: 잘못된 HTTP 버전 번호
+
+이 GET 요청에서 HTTP 버전 번호가 잘못 입력되어 문법 오류가 발생했습니다.
+서버는 "400 Bad Request" 오류를 반환합니다.
+HTTP 버전은 HTTP/1.0 또는 HTTP/1.1 이어야 합니다.
+
+```text
+GET /index.html HTTTTTP/1.0
+(enter twice to create a blank line)
+```
+
+```text
+HTTP/1.1 400 Bad Request
+Date: Sun, 08 Feb 2004 01:29:40 GMT
+Server: Apache/1.3.29 (Win32)
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML><HEAD>
+<TITLE>400 Bad Request</TITLE>
+</HEAD><BODY>
+<H1>Bad Request</H1>
+Your browser sent a request that this server could not understand.<P>
+The request line contained invalid characters following the protocol string.<P><P>
+</BODY></HTML>
+```
+
+참고: 최신 Apache 2.2.14는 이 오류를 무시하고 상태 코드가 "200 OK"인 문서를 반환합니다.
+
+#### 예: 잘못된 요청 URI
+
+다음 GET 요청에서 요청 URI 가 루트 "/"에서 시작되지 않아 "bad request"가 발생했습니다.
+
+```text
+GET test.html HTTP/1.0
+(blank line)
+```
+
+```text
+HTTP/1.1 400 Bad Request
+Date: Sun, 18 Oct 2009 10:42:27 GMT
+Server: Apache/2.2.14 (Win32)
+Content-Length: 226
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>400 Bad Request</title>
+</head><body>
+<h1>Bad Request</h1>
+<p>Your browser sent a request that this server could not understand.<br />
+</p>
+</body></html>
+```
+
+#### 예: Keep-Alive 연결
+
+HTTP/1.0 GET 요청에서는 기본적으로 서버가 응답을 전달 한 후 TCP 연결을 닫습니다.
+TCP 연결을 유지하도록 요청할 수 있으며 (네트워크 효율을 향상시키기 위해 동일한 TCP 연결을 사용하여 다른 요청을 보내도록), 선택적 요청 헤더 "Connection: Keep-Alive"를 사용할 수 있습니다.
+서버는 "Connection: Keep-Alive" 응답 헤더를 포함하여 클라이언트에게 이 연결을 사용하여 다른 요청을 보낼 수 있다는 것을 알립니다.
+
+```text
+GET /test.html HTTP/1.0
+Connection: Keep-Alive
+(blank line)
+```
+
+```text
+HTTP/1.1 200 OK
+Date: Sun, 18 Oct 2009 10:47:06 GMT
+Server: Apache/2.2.14 (Win32)
+Last-Modified: Sat, 20 Nov 2004 07:16:26 GMT
+ETag: "10000000565a5-2c-3e94b66c2e680"
+Accept-Ranges: bytes
+Content-Length: 44
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Content-Type: text/html
+
+<html><body><h1>It works!</h1></body></html>
+```
+
+참고:
+- "Keep-alive" 시간 초과 후 "호스트 연결이 끊겼습니다"(telnet의 경우) 메시지가 나타납니다.
+- "호스트 연결이 끊겼습니다" 메시지가 나타나기 전 (즉, "Keep-alive" 시간 초과 전)에는 동일한 TCP 연결을 통해 다른 요청을 보낼 수 있습니다.
+- "Connection: Keep-alive" 헤더는 대소문자를 구분하지 않습니다. 공백은 선택적입니다.
+- 선택적 헤더가 철자가 틀리거나 유효하지 않으면 서버에서 무시됩니다.
+
+#### 예: 보호된 리소스에 접근
+
+아래 GET 요청은 보호된 리소스에 접근을 시도했습니다.
+서버는 "403 Forbidden" 오류를 반환합니다.
+이 예제에서는 "htdocs\forbidden" 디렉토리는 Apache HTTP 서버 구성 파일 "httpd.conf"에서 다음과 같이 모든 접근을 거부하도록 구성되어 있습니다.
+
+```text
+<Directory "C:/apache/htdocs/forbidden">
+   Order deny,allow
+   deny from all
+</Directory>
+```
+
+```text
+GET /forbidden/index.html HTTP/1.0
+(blank line)
+```
+
+```text
+HTTP/1.1 403 Forbidden
+Date: Sun, 18 Oct 2009 11:58:41 GMT
+Server: Apache/2.2.14 (Win32)
+Content-Length: 222
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>403 Forbidden</title>
+</head><body>
+<h1>Forbidden</h1>
+<p>You don't have permission to access /forbidden/index.html
+on this server.</p>
+</body></html>
+```
+
+### HTTP/1.1 GET 요청
+
+HTTP/1.1 서버는 소위 가상 호스트를 지원합니다.
+즉, 같은 물리적 서버에는 여러 개의 가상 호스트가 있을 수 있으며, 다른 호스트 이름(예: www.nowhere123.com 과 www.test909.com)과 각각의 전용 문서 루트 디렉터리를 가지고 있습니다.
+따라서 HTTP/1.1 GET 요청에서는 "`Host`"라는 요청 헤더를 포함하여 가상 호스트 중 하나를 선택해야 합니다.
+
+#### 예: HTTP/1.1 요청
+
+HTTP/1.1은 기본적으로 지속적인 (또는 keep-alive) 연결을 유지하여 네트워크 효율을 개선합니다.
+응답이 전달되면 TCP 연결을 닫을 수 있도록 요청 헤더 "Connection: Close"를 사용할 수 있습니다.
+
+```text
+GET /index.html HTTP/1.1
+Host: 127.0.0.1
+(blank line)
+```
+
+```text
+HTTP/1.1 200 OK
+Date: Sun, 18 Oct 2009 12:10:12 GMT
+Server: Apache/2.2.14 (Win32)
+Last-Modified: Sat, 20 Nov 2004 07:16:26 GMT
+ETag: "10000000565a5-2c-3e94b66c2e680"
+Accept-Ranges: bytes
+Content-Length: 44
+Content-Type: text/html
+
+<html><body><h1>It works!</h1></body></html>
+```
+
+#### 예: HTTP/1.1 호스트 헤더 누락
+
+HTTP/1.1 요청에서 "`Host`" 헤더가 필수입니다.
+"`Host`" 헤더가 없으면 서버는 "400 Bad Request" 에러를 반환합니다.
+
+```text
+GET /index.html HTTP/1.1
+(blank line)
+```
+
+```text
+HTTP/1.1 400 Bad Request
+Date: Sun, 18 Oct 2009 12:13:46 GMT
+Server: Apache/2.2.14 (Win32)
+Content-Length: 226
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>400 Bad Request</title>
+</head><body>
+<h1>Bad Request</h1>
+<p>Your browser sent a request that this server could not understand.<br />
+</p>
+</body></html>
+```
+
+### 조건부 GET 요청
+
+앞의 모든 예에서 요청이 충족되면 서버는 전체 문서를 반환했습니다(즉, 무조건적입니다).
+추가 요청 헤더를 사용하여 "조건부 요청"을 보낼 수 있습니다.
+예를 들어, 마지막 수정 날짜를 기반으로 문서를 요청하거나 전체 문서 대신 문서의 일부 (또는 범위)를 요청할 수 있습니다(대용량 문서 다운로드에 유용합니다).
+
+조건부 요청 헤더들은 다음과 같은 것들이 있다:
+- If-Modified-Since (응답 상태 코드 "304 Not Modified" 확인)
+- If-Unmodified-Since
+- If-Match
+- If-None-Match
+- If-Range
+
+### 요청 헤더
+
+이 섹션은 일반적으로 사용되는 요청 헤더를 설명합니다.
+자세한 내용은 HTTP Specification을 참조하십시오.
+헤더 이름의 구문은 초기 대문자로 이루어진 단어들로 구성되며, 대시 (-)로 연결됩니다.
+예를 들어 Content-Length, If-Modified-Since.
+
+**Host**: **_domain-name_** -
+HTTP/1.1은 가상 호스트를 지원합니다.
+여러 DNS 이름(예: www.nowhere123.com 과 www.nowhere456.com)은 같은 물리적 서버에 있을 수 있으며 각각의 문서 루트 디렉토리를 가지고 있습니다.
+HTTP/1.1에서는 호스트를 선택하기 위해 `Host` 헤더는 필수입니다.
+
+다음 헤더는 클라이언트가 서버에서 문서의 선호되는 형식(미디어 타입, 예를 들어 JPEG vs. GIF 또는 사용된 언어, 예를 들어 영어 vs. 프랑스어)을 전달하도록 요청하는 데 사용될 수 있습니다. (같은 문서에 대한 여러 버전을 유지하는 경우)
+
+**Accept**: **_mime-type-1, mime-type-2, ..._** -
+클라이언트는 `Accept` 헤더를 사용하여 서버에 핸들 할 수있는 MIME 유형과 선호하는 MIME 유형을 알릴 수 있습니다.
+서버가 요청한 문서의 여러 버전을 유지하는 경우 (예 : GIF와 PNG의 이미지 또는 TXT와 PDF의 문서)이 헤더를 확인하여 클라이언트에게 전달할 버전을 결정할 수 있습니다. (예 : PNG은 GIF보다 고급이지만 모든 브라우저가 PNG를 지원하지 않습니다.)
+이 프로세스를 컨텐츠 타입 협상이라고합니다.
+
+**Accept-Language**: **_language-1, language-2, ..._** -
+클라이언트는 `Accept-Language` 헤더를 사용하여 서버에 어떤 언어를 처리할 수 있거나 선호하는지 알려줄 수 있습니다.
+서버가 요청한 문서의 여러 버전을 가지고 있을 경우(예를 들어 영어, 중국어, 프랑스어)이 헤더를 확인하여 반환할 버전을 결정할 수 있습니다.
+이 프로세스를 언어 협상이라고 합니다.
+
+**Accept-Charset**: **_Charset-1, Charset-2, ..._** -
+글자 집합 협상에서, 클라이언트는 이 헤더를 사용하여 서버에 어떤 글자 집합을 처리할 수 있거나 선호하는지 알려줄 수 있습니다.
+글자 집합 예는 ISO-8859-1, ISO-8859-2, ISO-8859-5, BIG5, UCS2, UCS4, UTF8 입니다.
+
+**Accept-Encoding**: **_encoding-method-1, encoding-method-2, ..._** -
+클라이언트는 이 헤더를 사용하여 서버에 지원하는 인코딩 방식을 알려줄 수 있습니다.
+서버가 요청한 문서의 인코딩 된 (또는 압축된) 버전을 가지고 있다면, 클라이언트가 지원하는 인코딩 방식으로 반환할 수 있습니다.
+서버는 또한 문서를 인코딩하여 클라이언트로 반환하여 전송 시간을 줄일 수 있습니다.
+서버는 응답 헤더 "`Content-Encoding`"를 설정하여 반환된 문서가 인코딩되었음을 클라이언트에 알려야 합니다.
+일반적인 인코딩 방법은 "x-gzip (.gz, .tgz)"와 "x-compress (.Z)"입니다.
+
+**Connection**: **_Close|Keep-Alive_** -
+클라이언트는 이 헤더를 사용하여 서버에 요청 후 연결을 닫을 것인지 유지할 것인지 알려줄 수 있습니다.
+HTTP/1.1은 기본적으로 지속적인 (keep-alive) 연결을 사용합니다.
+HTTP/1.0은 기본적으로 연결을 닫습니다.
+
+**Referer**: **_referer-URL_** -
+클라이언트는 이 헤더를 사용하여 이 요청의 참조자를 나타낼 수 있습니다.
+웹 페이지 1에서 링크를 클릭하여 웹 페이지 2를 방문하면 웹 페이지 1은 웹 페이지 2로의 요청의 참조자입니다.
+모든 주요 브라우저는 이 헤더를 설정하며, 요청이 어디에서 온 것인지 추적하는 데 사용될 수 있습니다(웹 광고 또는 콘텐츠 사용자 정의).
+그러나 이 헤더는 신뢰성이 낮으며 손쉽게 속임수될 수 있습니다.
+참고로 Referer는 "Referer"로 철자가 잘못되었습니다(불행히도 이대로 사용해야합니다).
+
+**User-Agent**: **_browser-type_** -
+요청을 만든 브라우저의 종류를 식별합니다.
+서버는 이 정보를 이용해 브라우저 종류에 따라 다른 문서를 반환할 수 있습니다.
+
+**Content-Length**: **_number-of-bytes_** -
+POST 요청에서 사용되며, 서버에 요청 바디의 길이를 알려줍니다.
+
+**Content-Type**: **_mime-type_** -
+POST 요청에서 사용되며, 서버에 요청 본문의 미디어 타입을 알려줍니다.
+
+**Cache-Control**: **_no-cache|..._** -
+클라이언트는 이 헤더를 사용하여 프록시 서버에 의해 페이지가 어떻게 캐시되는지 지정할 수 있습니다.
+"`no-cache`"는 프록시가 원래 서버에서 새로운 복사본을 얻도록 요구하며, 로컬 캐시된 복사본이 있더라도 얻어야합니다.
+(HTTP/1.0 서버는 "`Cache-Control: no-cache`"를 인식하지 않습니다. 대신 "`Pragma: no-cache`"를 사용합니다. 서버의 버전에 대해 확실하지 않은 경우 두 가지 요청 헤더를 포함하십시오.)
+
+**Authorization**:
+클라이언트가 자신의 자격 증명(사용자 이름/비밀번호)을 제공하여 보호된 자원에 액세스하는 데 사용됩니다.
+(이 헤더는 인증에 관한 나중의 장에서 설명합니다.)
+
+**Cookie**: **_cookie-name-1=cookie-value-1, cookie-name-2=cookie-value-2, ..._** -
+클라이언트는 이 헤더를 사용하여 서버에 이전에 이 서버가 설정한 쿠키를 반환합니다.
+(이 헤더는 상태 관리 장에서 설명됩니다.)
+
+**If-Modified-Since**: **_date_** -
+서버에게 특정 날짜 이후에 수정된 경우만 페이지를 전송하도록 알려줍니다.
+
+### GET 디렉토리 요청
+
+"testdir"라는 디렉토리가 "htdocs" 문서 기반 디렉토리에 있다고 가정해보자.
+
+클라이언트가 "/testdir/" (즉, 디렉토리)에 대한 GET 요청을 보낸다면,
+1. 디렉토리가 "index.html" 파일을 포함하고 있으면 서버는 "/testdir/index.html"을 반환한다.
+2. 그렇지 않으면, 서버 구성에서 디렉토리 목록 표시가 활성화되어 있으면 디렉토리 목록을 반환한다.
+3. 그렇지 않으면 서버는 "404 Page Not Found"를 반환합니다.
+
+클라이언트가 "/testdir" (디렉토리 경로 "/"를 지정하지 않은)에 GET 요청을 보내면 서버는 다음과 같이 "301 Move Permanently"를 반환하고 새로운 "Location"을 "/testdir/"로 제공합니다.
+
+```text
+GET /testdir HTTP/1.1
+Host: 127.0.0.1
+(blank line)
+```
+
+```text
+HTTP/1.1 301 Moved Permanently
+Date: Sun, 18 Oct 2009 13:19:15 GMT
+Server: Apache/2.2.14 (Win32)
+Location: http://127.0.0.1:8000/testdir/
+Content-Length: 238
+Content-Type: text/html; charset=iso-8859-1
+   
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>301 Moved Permanently</title>
+</head><body>
+<h1>Moved Permanently</h1>
+<p>The document has moved <a href="http://127.0.0.1:8000/testdir/">here</a>.</p>
+
+</body></html>
+```
+
+대부분의 브라우저는 "/testdir/"로의 추가 요청을 합니다.
+예를 들어, 브라우저에서 http://127.0.0.1:8000/testdir 주소를 요청하지 않고 끝나는 "/"를 포함하지 않는다면, 응답 후 주소에 "/"가 추가되는 것을 볼 수 있습니다.
+결론적으로, 디렉토리 요청에는 "/"를 포함하는 것이 추가적인 GET 요청을 절약하는 것입니다.
+
+### 프록시 서버를 통한 GET 요청 이슈
+
+프록시 서버를 통해 GET 요청을 전송하려면, (a) 프록시 서버에 TCP 연결을 설정하고, (b) 목적지 서버에 대한 절대적인 요청 URI `http://hostname:port/path/fileName`을 사용합니다.
+
+이 예제는 telnet을 사용해 캡처한 트레이스입니다.
+프록시 서버에 연결을 설정하고 GET 요청을 날립니다.
+요청 라인에는 절대적인 요청 URI가 사용됩니다.
+
+```text
+GET http://www.amazon.com/index.html HTTP/1.1
+Host: www.amazon.com
+Connection: Close
+(blank line)
+```
+
+```text
+HTTP/1.1 302 Found
+Transfer-Encoding: chunked
+Date: Fri, 27 Feb 2004 09:27:35 GMT
+Content-Type: text/html; charset=iso-8859-1
+Connection: close
+Server: Stronghold/2.4.2 Apache/1.3.6 C2NetEU/2412 (Unix)
+Set-Cookie: skin=; domain=.amazon.com; path=/; expires=Wed, 01-Aug-01 12:00:00 GMT
+Connection: close
+Location: http://www.amazon.com:80/exec/obidos/subst/home/home.html
+Via: 1.1 xproxy (NetCache NetApp/5.3.1R4D5)
+
+ed
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML><HEAD>
+<TITLE>302 Found</TITLE>
+</HEAD><BODY>
+<H1>Found</H1>
+The document has moved
+<A HREF="http://www.amazon.com:80/exec/obidos/subst/home/home.html">
+here</A>.<P>
+</BODY></HTML>
+
+0
+```
+
+응답이 "chunks"으로 반환된다는 것에 주목하세요.
 
 To be continued...
