@@ -905,4 +905,272 @@ here</A>.<P>
 
 응답이 "chunks"으로 반환된다는 것에 주목하세요.
 
+## HEAD 요청 메소드
+
+---
+
+HEAD 요청은 GET 요청과 유사합니다.
+그러나 서버는 실제 문서를 포함하는 응답 본문 없이 응답 헤더만을 반환합니다.
+이전에 실제 문서를 가져오기 전에 헤더 (예: `Last-Modified`, `Content-Type`, `Content-Length`)를 확인하는데 유용합니다.
+
+HEAD 요청의 구문은 다음과 같습니다.
+
+```text
+HEAD request-URI HTTP-version
+(other optional request headers)
+(blank line)
+(optional request body)
+```
+
+#### 예시
+
+```text
+HEAD /index.html HTTP/1.0
+(blank line)
+```
+
+```text
+HTTP/1.1 200 OK
+Date: Sun, 18 Oct 2009 14:09:16 GMT
+Server: Apache/2.2.14 (Win32)
+Last-Modified: Sat, 20 Nov 2004 07:16:26 GMT
+ETag: "10000000565a5-2c-3e94b66c2e680"
+Accept-Ranges: bytes
+Content-Length: 44
+Connection: close
+Content-Type: text/html
+X-Pad: avoid browser bug
+```
+
+응답은 실제 문서가 포함된 본문 없이 헤더만으로 구성됩니다.
+
+## OPTION 요청 메소드
+
+---
+
+OPTIONS 요청 메소드는 서버가 지원하는 요청 메소드를 조회하는데 사용될 수 있습니다.
+OPTIONS 요청 메시지의 구문은 다음과 같습니다.
+
+```text
+OPTIONS request-URI|* HTTP-version
+(other optional headers)
+(blank line)
+```
+
+"*"를 요청 URI로 사용하여 요청이 특정 리소스에 적용되지 않음을 나타냅니다.
+
+#### 예시
+
+예를 들어, 다음 OPTIONS 요청은 프록시 서버를 통해 전송됩니다.
+
+```text
+OPTIONS http://www.amazon.com/ HTTP/1.1
+Host: www.amazon.com
+Connection: Close
+(blank line)
+```
+
+```text
+HTTP/1.1 200 OK
+Date: Fri, 27 Feb 2004 09:42:46 GMT
+Content-Length: 0
+Connection: close
+Server: Stronghold/2.4.2 Apache/1.3.6 C2NetEU/2412 (Unix)
+Allow: GET, HEAD, POST, OPTIONS, TRACE
+Connection: close
+Via: 1.1 xproxy (NetCache NetApp/5.3.1R4D5)
+(blank line)
+```
+
+모든 서버가 GET 요청을 허용하면 그 서버는 HEAD 요청도 허용합니다.
+가끔씩, HEAD가 목록에 나오지 않을 수 있습니다.
+
+## TRACE 요청 메소드
+
+---
+
+클라이언트는 TRACE 요청을 보내어 서버에게 진단 트레이스를 반환하도록 요청할 수 있습니다.
+
+TRACE 요청의 구문은 다음과 같습니다.
+
+```text
+TRACE / HTTP-version
+(blank line)
+```
+
+#### 예시
+
+다음 예제는 프록시 서버를 통해 전송되는 TRACE 요청을 보여줍니다.
+
+```text
+TRACE http://www.amazon.com/ HTTP/1.1
+Host: www.amazon.com
+Connection: Close
+(blank line)
+```
+
+```text
+HTTP/1.1 200 OK
+Transfer-Encoding: chunked
+Date: Fri, 27 Feb 2004 09:44:21 GMT
+Content-Type: message/http
+Connection: close
+Server: Stronghold/2.4.2 Apache/1.3.6 C2NetEU/2412 (Unix)
+Connection: close
+Via: 1.1 xproxy (NetCache NetApp/5.3.1R4D5)
+
+9d
+TRACE / HTTP/1.1
+Connection: keep-alive
+Host: www.amazon.com
+Via: 1.1 xproxy (NetCache NetApp/5.3.1R4D5)
+X-Forwarded-For: 155.69.185.59, 155.69.5.234
+
+0
+```
+
+(TRACE 요청과 추적 경로를 비교하기 위해)
+
+## HTML 폼 데이터와 쿼리 문자열 제출
+
+---
+
+인터넷 애플리케이션에서는 예를 들어 전자 상거래와 검색 엔진과 같은 경우, 클라이언트는 서버에 추가 정보(예: 이름, 주소, 검색 키워드)를 제출해야 합니다.
+제출된 데이터에 따라 서버는 적절한 조치를 취하고 사용자 정의 응답을 생성합니다.
+
+클라이언트들은 일반적으로 HTML <form> 태그를 사용하여 생성된 폼을 보여줍니다.
+요청한 데이터를 입력하고 제출 버튼을 누르면, 브라우저는 폼 데이터를 압축하여 GET 요청 또는 POST 요청을 사용하여 서버로 제출합니다.
+
+다음은 아래 HTML 스크립트로 생성된 샘플 HTML 폼 입니다.
+
+```html
+<html> 
+<head><title>샘플 HTML 양식</title></head> 
+<body> 
+  <h2 align="left">샘플 HTML 데이터 입력 양식</h2> 
+  <form method="get" action ="/bin/process"> 
+    이름 입력: <input type="text" name="username"><br /> 
+    암호 입력: <input type="password" name="password"><br /> 
+    몇년도에? 
+    <input type="radio" name="year" value="2" />1년 
+    <input type="radio" name="year" value="2" />2년 
+    <input type="radio" 이름 ="연도" value="3" />3년<br />
+    <input type="checkbox" name="subject" value="e103" />E103<br /> 
+    요일 선택: 
+    <select name="day"> 
+      <option value="mon">월요일</option> 
+      <option value="wed">수요일</option> 
+      <option value="fri">금요일</option> 
+    </select><br /> 
+    <textarea rows="3" cols="30">여기에 특별 요청을 입력하세요. </textarea><br /> 
+    <input type="submit" value="SEND" /> 
+    <input type="reset" value="CLEAR" /> 
+    <input type="hidden" name="action" 값= "등록"/> 
+  </폼> 
+</바디> 
+</html>
+```
+
+![HTML_SampleForm](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/images/HTML_SampleForm.png)
+
+폼은 필드를 포함합니다. 필드 유형에는 다음과 같이 포함됩니다:
+- Text Box: `<input type="text">`를 사용하여 생성됨.
+- Password Box: `<input type="password">`를 사용하여 생성됨.
+- Radio Button: `<input type="radio">`를 사용하여 생성됨.
+- Checkbox: `<input type="checkbox">`를 사용하여 생성됨.
+- Selection: `<select>`와 `<option>`를 사용하여 생성됨.
+- Text Area: `<textarea>`를 사용하여 생성됨.
+- Submit Button: `<input type="submit">`를 사용하여 생성됨.
+- Reset Button: `<input type="reset">`를 사용하여 생성됨.
+- Hidden Field: `<input type="hidden">`를 사용하여 생성됨.
+- Button: `<input type="button">`를 사용하여 생성됨.
+
+각 필드는 이름을 가지고 지정된 값을 가질 수 있습니다.
+클라이언트가 필드를 채우고 제출 버튼을 누르면, 브라우저는 각 필드의 이름과 값을 수집하여 "이름 = 값" 쌍으로 압축하고 "&"를 필드 구분자로 사용하여 모든 필드를 합쳐 쿼리 문자열을 만듭니다.
+이를 요청의 일부로 서버로 전송합니다.
+
+```text
+name1=value1&name2=value2&name3=value3&...
+```
+
+쿼리 문자열 내에는 특수 문자가 허용되지 않습니다.
+그들은 "%"를 따라 ASCII 코드를 16진수로 대체해야 합니다.
+예를 들어, "~"는 "%7E"로, "#"는 "%23"와 같이 대체됩니다.
+공백이 매우 일반적이므로 "%20" 또는 "+"로 대체할 수 있습니다( "+" 문자는 "%2B"로 대체해야 합니다).
+이 대체 과정은 URL 인코딩이라고 하며 결과는 URL 인코딩 된 쿼리 문자열입니다.
+예를 들어, 폼 내에 3 필드가 있고 이름/값은 "name = Peter Lee", "address = #123 Happy Ave" 및 "language = C ++"인 경우 URL 인코딩 된 쿼리 문자열은 다음과 같습니다:
+
+```text
+name=Peter+Lee&address=%23123+Happy+Ave&Language=C%2B%2B
+```
+
+쿼리 문자열은 HTTP GET 또는 POST 요청 방식을 사용하여 서버로 전송될 수 있으며, <form> 속성 "method"에 지정됩니다.
+
+```text
+<form method="get|post" action="url">
+```
+
+GET 요청 방식이 사용되면, URL 인코딩된 쿼리 문자열은 "?"문자 뒤에 요청 URI에 추가됩니다.
+
+```text
+GET request-URI?query-string HTTP-version
+(other optional request headers)
+(blank line)
+(optional request body)
+```
+
+GET 요청을 사용하여 쿼리 문자열을 보낼 경우 다음과 같은 단점이 있습니다:
+- 요청 URI 뒤에 추가 할 수있는 데이터의 양이 제한됩니다.
+  이러한 양이 서버 특정 임계 값을 초과하면 서버는 "414 Request URI too Large" 오류를 반환합니다.
+- URL 인코딩된 쿼리 문자열은 브라우저 주소 상자에 나타납니다.
+
+POST 방식은 이러한 단점을 극복합니다.
+POST 요청 방식을 사용하면 쿼리 문자열은 요청 메시지의 본문에 전송되며, 그 양은 제한되지 않습니다.
+요청 헤더 `Content-Type`과 `Content-Length`는 서버에 쿼리 문자열의 유형과 길이를 알리는 데 사용됩니다.
+쿼리 문자열은 브라우저 주소 상자에 나타나지 않습니다.
+POST 방식은 나중에 설명됩니다.
+
+#### 예시
+
+다음 HTML 폼은 로그인 메뉴에서 사용자 이름과 비밀번호를 수집하는 데 사용됩니다.
+
+```html
+<html>
+<head><title>Login</title></head>
+<body>
+  <h2>LOGIN</h2>
+  <form method="get" action="/bin/login">
+    Username: <input type="text" name="user" size="25" /><br />
+    Password: <input type="password" name="pw" size="10" /><br /><br />
+    <input type="hidden" name="action" value="login" />
+    <input type="submit" value="SEND" />
+  </form>
+</body>
+</html>
+```
+
+![HTML_LoginForm](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/images/HTML_LoginForm.png)
+
+HTTP GET 요청 방식을 사용하여 쿼리 문자열을 보냅니다.
+사용자가 "Peter Lee"를 사용자 이름으로 "123456"를 비밀번호로 입력하고 제출 버튼을 클릭하면, 다음 GET 요청이 이루어집니다.
+
+```text
+GET /bin/login?user=Peter+Lee&pw=123456&action=login HTTP/1.1
+Accept: image/gif, image/jpeg, */*
+Referer: http://127.0.0.1:8000/login.html
+Accept-Language: en-us
+Accept-Encoding: gzip, deflate
+User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)
+Host: 127.0.0.1:8000
+Connection: Keep-Alive
+
+```
+
+참고로 입력한 비밀번호가 화면에 표시되지 않더라도 브라우저 주소 상자에서 명백하게 표시됩니다.
+적절한 암호화 없이 비밀번호를 전송해서는 안됩니다.
+
+```text
+http://127.0.0.1:8000/bin/login?user=Peter+Lee&pw=123456&action=login
+```
+
 To be continued...
