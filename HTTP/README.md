@@ -1173,4 +1173,510 @@ Connection: Keep-Alive
 http://127.0.0.1:8000/bin/login?user=Peter+Lee&pw=123456&action=login
 ```
 
-To be continued...
+## URL과 URI
+
+---
+
+#### URL (Uniform Resource Locator)
+
+URL (Uniform Resource Locator)는 RFC 2396에 정의되어 웹상에서 리소스를 고유하게 식별하는 데 사용됩니다.
+URL은 다음과 같은 구문을 가집니다:
+
+```text
+protocol://hostname:port/path-and-file-name
+```
+
+URL에는 4가지 부분이 있습니다.
+1. 프로토콜: 클라이언트와 서버가 사용하는 응용 계층 프로토콜, 예를들어 HTTP, FTP, telnet.
+2. 호스트 이름: 서버의 DNS 도메인 이름 (예 : www.nowhere123.com) 또는 IP 주소 (예 : 192.128.1.2).
+3. 포트: 서버가 클라이언트로부터의 요청을 대기하는 TCP 포트 번호.
+4. 경로 및 파일 이름 : 서버 문서 기본 디렉토리 아래에 있는 요청된 리소스의 이름과 위치.
+
+예를 들어 URL http://www.nowhere123.com/docs/index.html 에서, 통신 프로토콜은 HTTP이고, 호스트 이름은 www.nowhere123.com 이다.
+URL에 포트 번호가 지정되지 않았으며, 기본 번호인 TCP 포트 80(HTTP [STD 2])를 가진다.
+위치할 리소스의 경로와 파일 이름은 "/docs/index.html" 이다.
+
+다른 URL 예는 다음과 같습니다:
+
+```text
+ftp://www.ftp.org/docs/test.txt
+mailto:user@test101.com
+news:soc.culture.Singapore
+telnet://www.nowhere123.com/
+```
+
+#### 인코딩된 URL
+
+URL은 공백 또는 '~'와 같은 특수 문자를 포함할 수 없습니다.
+특수 문자는 %xx 형식으로 인코딩됩니다.
+여기서 xx는 ASCII 16진수 코드입니다.
+예를 들어, '~'는 %7e로 인코딩되고 '+'는 %2b로 인코딩됩니다.
+공백은 %20 또는 '+'로 인코딩될 수 있습니다.
+인코딩 후의 URL은 인코딩된 URL이라고 합니다.
+
+#### URI (Uniform Resource Identifier)
+
+URI(Uniform Resource Identifier)는 RFC3986에 정의되어 리소스 내의 프래그먼트를 위치할 수 있는 URL보다 더 일반적입니다.
+HTTP 프로토콜의 URI 구문은 다음과 같습니다:
+
+```text
+http://host:port/path?request-parameters#nameAnchor
+```
+
+- 이름=값 쌍으로 표시되는 요청 매개변수는 URL에서 '?'로부터 분리됩니다. 이름=값 쌍은 '&'로 분리됩니다.
+- #nameAnchor는 anchor 태그 <a name="anchorName">...</a>를 통해 정의된 HTML 문서 내의 프래그먼트를 식별합니다.
+- 세션 관리를 위한 URL 재작성, 예를 들어, "...;sessionID=xxxxxx".
+
+## POST 요청 메소드
+
+---
+
+POST 요청 메소드는 서버로 추가 데이터를 "post"하는 데 사용됩니다(예: HTML 폼 데이터 제출 또는 파일 업로드).
+브라우저에서 HTTP URL을 요청하면 항상 GET 요청이 일어납니다.
+POST 요청을 트리거하려면 HTML 폼에 `method = "post"` 속성을 사용하거나 자체 네트워크 프로그램을 작성할 수 있습니다.
+HTML 폼 데이터를 제출할 때는 GET 요청과 동일하지만 URL 인코딩 된 쿼리 문자열이 요청 본문 대신 요청 URI 뒤에 추가됩니다.
+
+POST 요청은 다음 구문을 가집니다:
+
+```text
+POST request-URI HTTP-version
+Content-Type: mime-type
+Content-Length: number-of-bytes
+(other optional request headers)
+  
+(URL-encoded query string)
+```
+
+POST 요청에서는 요청 본문의 미디어 타입과 길이를 알리기 위해 요청 헤더 `Content-Type`과 `Content-Length`가 필요합니다.
+
+#### 예: POST 요청 방식을 사용하여 폼 데이터 제출
+
+위에서 사용한 HTML 스크립트를 그대로 사용하지만 요청 방식을 POST로 변경합니다.
+
+```html
+<html>
+<head><title>Login</title></head>
+<body>
+  <h2>LOGIN</h2>
+  <form method="post" action="/bin/login">
+    Username: <input type="text" name="user" size="25" /><br />
+    Password: <input type="password" name="pw" size="10" /><br /><br />
+    <input type="hidden" name="action" value="login" />
+    <input type="submit" value="SEND" />
+  </form>
+</body>
+</html>
+```
+
+사용자가 "Peter Lee"를 사용자 이름으로, "123456"를 비밀번호로 입력하고 제출 버튼을 클릭하면, 브라우저가 다음과 같은 POST 요청을 생성합니다.
+
+```text
+POST /bin/login HTTP/1.1
+Host: 127.0.0.1:8000
+Accept: image/gif, image/jpeg, */*
+Referer: http://127.0.0.1:8000/login.html
+Accept-Language: en-us
+Content-Type: application/x-www-form-urlencoded
+Accept-Encoding: gzip, deflate
+User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)
+Content-Length: 37
+Connection: Keep-Alive
+Cache-Control: no-cache
+   
+User=Peter+Lee&pw=123456&action=login
+```
+
+참고로 `Content-Type` 헤더는 서버에게 데이터가 URL-encoded(특정 MIME 타입 `application/x-www-form-urlencoded`로)되었음을 알려줍니다.
+`Content-Length` 헤더는 서버가 메시지 본문에서 읽어야 할 바이트 수를 알려줍니다.
+
+#### 폼 데이터 제출을 위한 POST vs GET
+
+이전 섹션에서 언급한 것처럼, POST 요청은 GET 요청에 비해 쿼리 스트링을 보낼 때 다음과 같은 장점이 있습니다.
+
+- 포스팅할 수 있는 데이터의 양은 무제한이며 요청 본문에 유지되며 서버로 보내는 데 자주 별도의 데이터 스트림을 사용합니다.
+- 쿼리 스트링은 브라우저의 주소 상자에 나타나지 않습니다.
+
+참고로 비밀번호가 브라우저 주소 상자에 나타나지 않아도 서버로 클리어 텍스트로 전송되며 네트워크 스니핑에 가려져 안전하지 않습니다.
+따라서 POST 요청을 사용하여 비밀번호를 보내는 것은 절대로 안전하지 않습니다.
+
+## `multipaprt/form-data` POST 요청을 사용한 파일 업로드
+
+---
+
+"RFC 1867: HTML 기반 파일 업로드"는 HTML 폼에서 POST 요청을 사용하여 서버로 파일을 업로드하는 방법을 정의합니다.
+HTML `<form>`의 `<input>` 태그에 `type="file"`이라는 새로운 속성이 추가되어 파일 업로드를 지원합니다.
+파일 업로드 POST 데이터는 URL 인코딩되지 않고(표준 `application/x-www-form-urlencoded`), 새로운 MIME 유형인 `multipart/form-data`를 사용합니다.
+
+#### 예시
+
+다음 HTML 폼은 파일 업로드에 사용될 수 있습니다:
+
+```html
+<html>
+<head><title>File Upload</title></head>
+<body>
+  <h2>Upload File</h2>
+  <form method="post" enctype="multipart/form-data" action="servlet/UploadServlet">
+    Who are you: <input type="text" name="username" /><br />
+    Choose the file to upload:
+    <input type="file" name="fileID" /><br />
+    <input type="submit" value="SEND" />
+  </form>
+</body>
+</html>
+```
+
+![HTML_FileUploadForm](https://www3.ntu.edu.sg/home/ehchua/programming/webprogramming/images/HTML_FileUploadForm.png)
+
+
+브라우저가 `<input>` 태그의 `type="file"` 속성을 만나면 텍스트 상자와 "browse..." 버튼을 표시해서 사용자가 업로드할 파일을 선택할 수 있도록 합니다.
+
+사용자가 제출 버튼을 클릭하면, 브라우저는 폼 데이터와 선택된 파일(들)의 내용을 전송합니다.
+이전의 인코딩 타입 "`application/x-www-form-urlencoded`"는 이진 데이터와 non-ASCII 문자를 전송하는데 비효율적 입니다.
+대신 "`multipart/form-data`"라는 새로운 미디어 타입을 사용합니다.
+
+각 부분은 원래 HTML 폼 내의 입력 이름을 식별하고, 미디어가 알려지면 컨텐츠 타입을 포함하고, 그렇지 않으면 `application/octet-stream`을 포함합니다.
+
+원래 장소 파일 이름은 "`filename`" 매개변수로 제공되거나 "`Content-Disposition: form-data`" 헤더에서 제공될 수 있습니다.
+
+파일 업로드에서 POST 요청에 사용되는 메시지의 예는 다음과 같습니다.
+
+```text
+POST /bin/upload HTTP/1.1
+Host: test101
+Accept: image/gif, image/jpeg, */*
+Accept-Language: en-us
+Content-Type: multipart/form-data; boundary=---------------------------7d41b838504d8
+Accept-Encoding: gzip, deflate
+User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)
+Content-Length: 342
+Connection: Keep-Alive
+Cache-Control: no-cache
+   
+-----------------------------7d41b838504d8 Content-Disposition: form-data; name="username" 
+Peter Lee
+-----------------------------7d41b838504d8 Content-Disposition: form-data; name="fileID"; filename="C:\temp.html" Content-Type: text/plain 
+<h1>Home page on main server</h1> 
+-----------------------------7d41b838504d8--
+```
+
+Servlet 3.0에서는 파일 업로드 처리를 위한 기본 지원을 제공합니다.
+"[Uploading Files in Servlet 3.0](https://www3.ntu.edu.sg/home/ehchua/programming/java/JavaServletCaseStudyPart2.html#FileUpload)"를 읽어보세요.
+
+## CONNECT 요청 메소드
+
+---
+
+HTTP CONNECT 요청은 프록시가 다른 호스트와 연결을 하도록 요청하는 것으로, 메시지를 해석하거나 캐시하는 대신 그냥 컨텐츠를 전달하는 것입니다.
+이것은 주로 프록시를 통한 연결을 맺기 위해 사용됩니다.
+
+## 기타 요청 메소드
+
+---
+
+PUT: 서버에 데이터를 저장하라는 요청.   
+DELETE: 서버에서 데이터를 삭제하라는 요청.   
+보안 상의 이유로, PUT과 DELETE는 대부분의 상용 서버에서는 지원되지 않는다.   
+HTTP 프로토콜의 기능을 확장하기 위해 확장 메소드(그리고 에러 코드와 헤더)를 정의할 수 있다.
+
+
+## 콘텐츠 협상
+
+---
+
+HTTP는 클라이언트와 서버 간의 콘텐츠 협상을 지원합니다.
+클라이언트는 요청 헤더 (`Accept`, `Accept-Language`, `Accept-Charset`, `Accept-Encoding` 등)를 사용하여 서버에 처리 가능한 것이나 선호하는 콘텐츠를 알릴 수 있습니다.
+서버가 같은 문서의 다른 형식의 여러 버전을 가지고 있다면 클라이언트의 선호하는 형식을 반환합니다.
+이 과정을 콘텐츠 협상이라고 합니다.
+
+### Content-Type 협상
+
+서버는 파일 확장자에 미디어 타입을 매핑하는 MIME 구성 파일("`conf\mime.types`")을 사용하여 파일의 미디어 타입을 알 수 있습니다.
+예를 들어, ".htm", ".html" 파일 확장자는 "`text/html`" MIME 미디어 타입과 연결되고, ".jpg", ".jpeg" 파일 확장자는 "`image/jpeg`"와 연결됩니다.
+파일이 클라이언트에게 반환될 때, 서버는 `Content-Type` 응답 헤더를 넣어 클라이언트에게 데이터의 미디어 타입을 알려줘야 합니다.
+
+Content-Type 협상의 경우, 클라이언트가 유형을 지정하지 않고 "logo"라는 파일을 요청하고 "Accept: image/gif, image/jpeg,..."라는 헤더를 보낸다고 가정합니다.
+서버에 "logo.gif"와 "logo.jpg"의 두 가지 유형이 있고 MIME 구성 파일이 다음 항목이 있는 경우:
+
+```text
+image/gif        gif
+image/jpeg       jpeg jpg jpe
+```
+
+서버는 클라이언트의 `Accept` 헤더와 MIME 타입/파일 매핑을 기반으로 "logo.gif"를 클라이언트에게 반환할 것이다.
+서버는 응답에 "`Content-type: image/gif`" 헤더를 포함할 것이다.
+
+이 메시지 트레이스는 다음과 같이 보여집니다.
+
+```text
+GET /logo HTTP/1.1
+Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg,
+  application/x-shockwave-flash, application/vnd.ms-excel, 
+  application/vnd.ms-powerpoint, application/msword, */*
+Accept-Language: en-us
+Accept-Encoding: gzip, deflate
+User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)
+Host: test101:8080
+Connection: Keep-Alive
+(blank line)
+```
+
+```text
+HTTP/1.1 200 OK
+Date: Sun, 29 Feb 2004 01:42:22 GMT
+Server: Apache/1.3.29 (Win32)
+Content-Location: logo.gif
+Vary: negotiate,accept
+TCN: choice
+Last-Modified: Wed, 21 Feb 1996 19:45:52 GMT
+ETag: "0-916-312b7670;404142de"
+Accept-Ranges: bytes
+Content-Length: 2326
+Keep-Alive: timeout=15, max=100
+Connection: Keep-Alive
+Content-Type: image/gif
+(blank line)
+(body omitted)
+```
+
+하지만 서버가 "logo.*" 파일 3개를 가지고 있고, "Accept: /"가 사용되었다면, 서버는 기본적으로 "logo.html" 파일을 클라이언트에게 전송할 것이며, "Content-type: text/html" 헤더를 포함할 것입니다.
+
+```text
+GET /logo HTTP/1.1
+Accept: */*
+Accept-Language: en-us
+Accept-Encoding: gzip, deflate
+User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)
+Host: test101:8080
+Connection: Keep-Alive
+(blank line)
+```
+
+```text
+HTTP/1.1 200 OK
+Date: Sun, 29 Feb 2004 01:48:16 GMT
+Server: Apache/1.3.29 (Win32)
+Content-Location: logo.html
+Vary: negotiate,accept
+TCN: choice
+Last-Modified: Fri, 20 Feb 2004 04:31:17 GMT
+ETag: "0-10-40358d95;404144c1"
+Accept-Ranges: bytes
+Content-Length: 16
+Keep-Alive: timeout=15, max=100
+Connection: Keep-Alive
+Content-Type: text/html
+(blank line)
+(body omitted)
+```
+
+```text
+Accept: */*
+```
+
+Content-type 협상을 위해 Apache에서 사용되는 관련된 설정 지침들은 다음과 같습니다.
+
+- `TypeConfig` 지시문은 MIME 매핑 파일의 위치를 지정하는 데 사용될 수 있습니다.
+```text
+TypeConfig conf/mime.types
+```
+- `AddType` 지시문은 설정 파일에 추가 MIME 타입 매핑을 포함하는 데 사용될 수 있습니다.
+```text
+AddType mime-type extension1 [extension2]
+```
+- `DefaultType` 지시문은 알 수 없는 파일 확장자의 MIME 유형을 제공합니다.(`Content-Type` 응답 헤더에서)
+```text
+DefaultType text/plain
+```
+
+### Language 협상과 "Option MultiView"
+
+"Option MultiView" 지시문은 Language 협상을 구현하는 더 간단한 방법입니다.
+예를 들어:
+
+```text
+AddLanguage en .en
+<Directory "C:/_javabin/Apache1.3.29/htdocs">
+    Options Indexes MultiViews
+</Directory>
+```
+
+요청한 클라이언트가 "index.html"을 요청하고 "Accept-Language: en-us" 헤더를 보낸다고 가정합니다.
+서버가 "test.html", "test.html.en" 그리고 "test.html.cn"을 가지고 있다면, 클라이언트의 선호도에 따라 "test.html.en"이 반환될 것입니다. ("en"은 "en-us"를 포함합니다)
+
+이 메시지 트레이스는 다음과 같이 보여집니다.
+
+```text
+GET /index.html HTTP/1.1
+Accept: */*
+Accept-Language: en-us
+Accept-Encoding: gzip, deflate
+User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)
+Host: test101:8080
+Connection: Keep-Alive
+(blank line)
+```
+
+```text
+HTTP/1.1 200 OK
+Date: Sun, 29 Feb 2004 02:08:29 GMT
+Server: Apache/1.3.29 (Win32)
+Content-Location: index.html.en
+Vary: negotiate
+TCN: choice
+Last-Modified: Sun, 29 Feb 2004 02:07:45 GMT
+ETag: "0-13-40414971;40414964"
+Accept-Ranges: bytes
+Content-Length: 19
+Keep-Alive: timeout=15, max=100
+Connection: Keep-Alive
+Content-Type: text/html
+Content-Language: en
+(blank line)
+(body omitted)
+```
+
+`AddLanguage` 지시문은 파일 확장자와 언어 코드를 연결하는데 사용되고, MIME 타입/파일 매핑과 비슷합니다.
+
+참고로 "`Options All`" 지시문은 "`MultiViews`" 옵션을 포함하지 않습니다.
+즉, MultiViews를 명시적으로 켜야합니다.
+
+이 `LanguagePriority` 지시문은 콘텐츠 협상 중 동점이 있거나 클라이언트가 표시하지 않은 경우 언어 우선 순위를 지정하는 데 사용될 수 있습니다. 
+예를 들어:
+
+```text
+<IfModule mod_negotiation.c>
+   LanguagePriority en da nl et fr de el it ja kr no pl pt pt-br
+</IfModule>
+```
+
+### Character Set 협상 
+
+고객은 서버에서 선호하는 문자 집합을 협상하기 위해 `Accept-Charset` 요청 헤더를 사용할 수 있습니다.
+
+```text
+Accept-Charset: charset-1, charset-2, ...
+```
+
+일반적으로 사용하는 문자 집합에는 ISO-8859-1 (Latin-I), ISO-8859-2, ISO-8859-5, BIG5 (중국어 구어), GB2312 (중국어 간체), UCS2 (2바이트 유니코드), UCS4 (4바이트 유니코드), UTF8 (인코딩된 유니코드) 등이 있습니다.
+
+마찬가지로 `AddCharset` 지시문은 파일 확장자를 문자 집합과 연결하는 데 사용됩니다.
+예를 들어:
+
+```text
+AddCharset ISO-8859-8   .iso8859-8
+AddCharset ISO-2022-JP  .jis
+AddCharset Big5         .Big5  .big5
+AddCharset WINDOWS-1251 .cp-1251
+AddCharset CP866        .cp866
+AddCharset ISO-8859-5   .iso-ru
+AddCharset KOI8-R       .koi8-r
+AddCharset UCS-2        .ucs2
+AddCharset UCS-4        .ucs4
+AddCharset UTF-8        .utf8
+```
+
+### Encoding 협상
+
+클라이언트는 `Accept-Encoding` 헤더를 사용해 서버에 지원하는 인코딩 유형을 알려줄 수 있습니다.
+일반적인 인코딩 체계는 "x-gzip (.gz, .tgz)"와 "x-compress (.Z)"입니다.
+
+```text
+Accept-Encoding: encoding-method-1, encoding-method-2, ...
+```
+
+마찬가지로 `AddEncoding` 지시문은 파일 확장자를 인코딩 체계와 연결하는 데 사용됩니다.
+예를 들어:
+
+```text
+AddEncoding x-compress  .Z
+AddEncoding x-gzip      .gz .tgz
+```
+
+## 지속적인(또는 Keep-alive) 연결
+
+---
+
+HTTP/1.0에서는 기본적으로 응답을 전송 후 서버가 TCP 연결을 닫습니다(Connection: Close).
+즉, 각 TCP 연결은 하나의 요청만 서비스합니다.
+이는 많은 HTML 페이지가 기타 리소스(예: 이미지, 스크립트-로컬 또는 원격 서버)를 가리키는 하이퍼링크(`<a href="url">` 태그)를 포함하고 있기 때문입니다.
+만약 5개의 인라인 이미지를 포함하는 페이지를 다운로드 한다면, 브라우저는 같은 서버에 6번 TCP 연결을 수립해야 합니다.
+
+클라이언트는 서버와 협상하여 응답을 전송 후 연결을 닫지 않도록 요청할 수 있습니다.
+그러면 다른 요청을 같은 연결을 통해 전송할 수 있습니다.
+이것은 지속적인 연결(또는 Keep-alive 연결)이라고 불립니다.
+지속적인 연결은 네트워크 효율을 크게 향상시킵니다.
+HTTP/1.0에서는 기본 연결이 비-지속적 입니다.
+지속적인 연결을 요청하려면 클라이언트는 요청 메시지에 "Connection: Keep-alive" 요청 헤더를 포함해 서버와 협상해야합니다.
+
+HTTP/1.1에서는 기본 연결이 지속적입니다.
+클라이언트는 "Connection: Keep-alive" 헤더를 전송하지 않아도 됩니다.
+대신 클라이언트는 응답을 전송 후 연결을 닫을 것을 요청하는 "Connection: Close" 헤더를 전송할 수 있습니다.
+
+지속적인 연결은 많은 작은 인라인 이미지와 기타 연관된 데이터를 가진 웹 페이지에서 매우 유용합니다.
+이러한 모든 것들은 같은 연결을 사용하여 다운로드 할 수 있기 때문입니다.
+지속적인 연결의 이점은 다음과 같습니다.
+
+- 클라이언트, 프록시, 게이트웨이, 원본 서버에서 TCP 연결을 열고 닫는데 사용되는 CPU 시간과 자원 절약
+- 요청이 "파이프라인" 될 수 있습니다. 즉, 클라이언트는 각 응답을 기다리지 않고 여러 요청을 할 수 있어 네트워크를 더 효율적으로 사용할 수 있습니다.
+- TCP 연결 열기 핸드쉐이킹을 수행할 필요 없어 빠른 응답
+
+Apache HTTP 서버에서는 지속적인 연결과 관련된 몇 가지 구성 지시문이 있습니다:
+
+`KeepAlive` 지시문은 지속적인 연결을 지원할지 여부를 결정합니다.
+On 또는 Off 값을 가질 수 있습니다.
+
+```text
+KeepAlive On|Off
+```
+
+`MaxKeepAliveRequests` 지시문은 지속적인 연결을 통해 전송할 수 있는 요청의 최대 개수를 설정합니다.
+0으로 설정하면 제한 없는 요청 개수를 허용할 수 있습니다.
+성능과 네트워크 효율을 높이기 위해 높은 값으로 설정하는 것이 좋습니다.
+
+```text
+MaxKeepAliveRequests 200
+```
+
+`KeepAliveTimeout` 지시문은 지속적인 연결이 다음 요청을 기다리는 시간을 초단위로 설정합니다.
+
+```text
+KeepAliveTimeout 10
+```
+
+## 범위 다운로드
+
+---
+
+```text
+Accept-Ranges: bytes
+Transfer-Encoding: chunked
+```
+
+## 캐시 제어
+
+---
+
+클라이언트는 "Cache-control: no-cache" 요청 헤더를 전송하여 프록시에게 원본 서버에서 새로운 복사본을 가져오도록 요청할 수 있습니다.
+그러나 HTTP/1.0 서버는 이 헤더를 이해하지 못하고 "Pragma: no-cache"라는 예전 요청 헤더를 사용합니다.
+요청에 두 개의 헤더를 포함시킬 수 있습니다.
+
+```text
+Pragma: no-cache
+Cache-Control: no-cache
+```
+
+### 참고 및 자료
+
+- W3C HTTP specifications at http://www.w3.org/standards/techs/http.
+- RFC 2616 "Hypertext Transfer Protocol HTTP/1.1", 1999 @ http://www.ietf.org/rfc/rfc2616.txt.
+- RFC 1945 "Hypertext Transfer Protocol HTTP/1.0", 1996 @ http://www.ietf.org/rfc/rfc1945.txt.
+- STD 2: "Assigned numbers", 1994.
+- STD 5: "Internet Protocol (IP)", 1981.
+- STD 6: "User Datagram Protocol (UDP)", 1980.
+- STD 7: "Transmission Control Protocol (TCP)", 1983.
+- RFC 2396: "Uniform Resource Identifiers (URI): Generic Syntax", 1998.
+- RFC 2045: "Multipurpose Internet Mail Extension (MIME) Part 1: Format of Internet Message Bodies", 1996.
+- RFC 1867: "Form-based File upload in HTML", 1995, (obsoleted by RFC2854).
+- RFC 2854: "The text/html media type", 2000.
+- Mutlipart Servlet for file upload @ www.servlets.com
