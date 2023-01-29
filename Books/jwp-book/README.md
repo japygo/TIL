@@ -24,6 +24,8 @@
 
 ### [5장 웹 서버 리팩토링, 서블릿 컨테이너와 서블릿의 관계](./chapter5)
 
+### [6장 서블릿/JSP를 활용해 동적인 웹 애플리케이션 개발하기](./chapter6)
+
 ## 3. 세 번째 양파 껍질
 
 To be continued...
@@ -37,3 +39,4 @@ To be continued...
 # 테스트 소스
 
 - https://github.com/japygo/web-application-server
+- https://github.com/japygo/jwp-basic
