@@ -13,4 +13,6 @@ JSP는 Java Server Page라는 이름에서도 알 수 있듰이 JSP에서 자바
 JSP에서는 스크립틀릿(scriptlet)이라고 하는 `<% %>` 내에 자바 구문을 그대로 사용할 수 있게 되었다.
 웹 애플리케이션 요구사항의 복잡도가 증가하면서 이를 극복하기 위해 등장한 기술이 JSTL(JavaServer Pages Standard Tag Library)과 EL(Expression Language)이다.
 
+### 6.1.2 개인정보수정 실습
+
 To be continued...
