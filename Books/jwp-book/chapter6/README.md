@@ -66,4 +66,19 @@ MVC 패턴을 지원하는 프레임워크를 구현한다.
 단, CSS, 자바스크립트, 이미지와 같은 정적인 자원은 굳이 컨트롤러가 필요없다.
 `core.web.filter.ResourceFilter` 서블릿 필터를 추가하여 해결할 수 있다.
 
+#### 문제 발생)
+1. 요청 -> `DispatcherServlet`
+2. `DispatcherServlet`에서 `RequestMapping` 통해 `Controller` 반환
+3. 해당 `Controller`에서 `View` 반환
+4. 해당 `View`로 `forward` 또는 `sendRedirect` 응답
+5. 응답한 `View`가 `DispatcherServlet` 다시 요청
+6. `View`에 해당하는 `Controller`가 없기 때문에 에러 발생
+
+`DispatcherServlet`의 서블릿 매핑을 "/*"로 하면 위와 같은 에러가 발생하지만 "/"로 설정하였는데 위와 같은 에러가 발생했다.
+
+```java
+@WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
+public class DispatcherServlet extends HttpServlet {}
+```
+
 To be continued...
