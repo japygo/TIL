@@ -65,20 +65,26 @@ MVC 패턴을 지원하는 프레임워크를 구현한다.
 `@WebServlet`으로 URL을 매핑할 때 `urlPatterns="/"`와 같이 설정하면 모든 요청이 URL이 `DispatcherServlet`으로 연결된다.  
 단, CSS, 자바스크립트, 이미지와 같은 정적인 자원은 굳이 컨트롤러가 필요없다.
 `core.web.filter.ResourceFilter` 서블릿 필터를 추가하여 해결할 수 있다.
+ 
+> ### 이슈사항
+> 1. 요청 -> `DispatcherServlet`
+> 2. `DispatcherServlet`에서 `RequestMapping` 통해 `Controller` 반환
+> 3. 해당 `Controller`에서 `View` 반환
+> 4. 해당 `View`로 `forward` 또는 `sendRedirect` 응답
+> 5. 응답한 `View`가 `DispatcherServlet` 다시 요청
+> 6. `View`에 해당하는 `Controller`가 없기 때문에 에러 발생
+>
+> `DispatcherServlet`의 서블릿 매핑을 "/*"로 하면 위와 같은 에러가 발생하지만 "/"로 설정하였는데 위와 같은 에러가 발생했다.
+>
+> ```java
+> @WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
+> public class DispatcherServlet extends HttpServlet {}
+> ```
+> ### 해결방안
+> 각 jsp 파일에 `<jsp:include page="/layout/header.html" />`를 이용하여 첨부되어 있어 이를 `<%@ include file="layout/header.html"%>`로 수정하니 에러가 발생하지 않았다. 
+> 
+> `<jsp:include />`를 사용하면 `DispatcherServlet`의 서블릿 매핑이 "/*"이 아닌 "/"이어도 첨부한 페이지가 매핑되는 것 같다.
 
-#### 문제 발생)
-1. 요청 -> `DispatcherServlet`
-2. `DispatcherServlet`에서 `RequestMapping` 통해 `Controller` 반환
-3. 해당 `Controller`에서 `View` 반환
-4. 해당 `View`로 `forward` 또는 `sendRedirect` 응답
-5. 응답한 `View`가 `DispatcherServlet` 다시 요청
-6. `View`에 해당하는 `Controller`가 없기 때문에 에러 발생
 
-`DispatcherServlet`의 서블릿 매핑을 "/*"로 하면 위와 같은 에러가 발생하지만 "/"로 설정하였는데 위와 같은 에러가 발생했다.
-
-```java
-@WebServlet(name = "dispatcher", urlPatterns = "/", loadOnStartup = 1)
-public class DispatcherServlet extends HttpServlet {}
-```
 
 To be continued...
