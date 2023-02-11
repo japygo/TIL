@@ -39,5 +39,9 @@ JDBC에 대한 공통 라이브러리를 만들어 개발자가 SQL 쿼리, 쿼�
 ### 7.2.2 요구사항 분리 및 힌트
 
 1. INSERT, UPDATE 쿼리는 비슷하기 때문에 먼저 INSERT, UPDATE 쿼리를 가지는 메소드의 중복 제거 작업을 진행한다.
+2. 분리한 메소드 중에서 변화가 발생하지 않는 부분(즉, 공통 라이브러리로 구현할 코드)을 새로운 클래스로 추가한 후 이동한다.
+3. InsertJdbcTemplate과 UpdateJdbcTemplate의 UserDao에 대한 의존관계를 끊는다.
+4. InsertJdbcTemplate과 UpdateJdbcTemplate의 구현 부분이 다른 부분이 없다. 하나를 사용하도록 리팩토링한다.
+5. JdbcTemplate은 아직도 User와 의존관계를 가지기 때문에 다른 DAO 클래스에서 재사용할 수 없다. User와 의존관계를 끊는다.
 
 To be continued...
