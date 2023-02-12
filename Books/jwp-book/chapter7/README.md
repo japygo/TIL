@@ -43,5 +43,12 @@ JDBC에 대한 공통 라이브러리를 만들어 개발자가 SQL 쿼리, 쿼�
 3. InsertJdbcTemplate과 UpdateJdbcTemplate의 UserDao에 대한 의존관계를 끊는다.
 4. InsertJdbcTemplate과 UpdateJdbcTemplate의 구현 부분이 다른 부분이 없다. 하나를 사용하도록 리팩토링한다.
 5. JdbcTemplate은 아직도 User와 의존관계를 가지기 때문에 다른 DAO 클래스에서 재사용할 수 없다. User와 의존관계를 끊는다.
+6. 더 이상 JdbcTemplate은 특정 DAO 클래스에 종속적이지 않다. 이와 똑같은 방법으로 SelectJdbcTemplate을 생성해 반복 코드를 분리한다.
+7. JdbcTemplate과 SelectJdbcTemplate을 보니 중복 코드가 보인다. 또한 굳이 2개의 클래스를 제공하고 싶지 않다. JdbcTemplate과 같은 한 개의 클래스만을 제공하도록 리팩토링해본다.
+8. 위와 같이 SelectJdbcTemplate 클래스로 통합했을 때의 문제점을 찾아보고 이를 해결하기 위한 방법을 찾아본다.
+9. SQLException을 런타임 Exception으로 변환해 throw하도록 한다. Connection, PreparedStatement 자원 반납을 close() 메소드를 사용하지 말고 try-with-resources 구문을 적용해 해결한다.
+10. SELECT문의 경우 조회한 데이터를 캐스팅하는 부분이 있다. 캐스팅하지 않고 구현하도록 개선한다.
+11. 각 쿼리에 전달할 인자를 PreparedStatementSetter를 통해 전달할 수도 있지만 자바의 가변인자를 통해 전달할 수 있는 메소드를 추가한다.
+12. UserDao에서 PreparedStatementSetter, RowMapper 인터페이스를 구현하는 부분을 JDK 8에서 추가한 람다 표현식을 활용하도록 리팩토링한다.
 
 To be continued...
