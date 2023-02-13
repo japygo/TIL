@@ -51,4 +51,12 @@ JDBC에 대한 공통 라이브러리를 만들어 개발자가 SQL 쿼리, 쿼�
 11. 각 쿼리에 전달할 인자를 PreparedStatementSetter를 통해 전달할 수도 있지만 자바의 가변인자를 통해 전달할 수 있는 메소드를 추가한다.
 12. UserDao에서 PreparedStatementSetter, RowMapper 인터페이스를 구현하는 부분을 JDK 8에서 추가한 람다 표현식을 활용하도록 리팩토링한다.
 
+## 7.3 동영상을 활용한 DAO 리팩토링 실습
+
+- https://youtu.be/ylrMBeakVnk: DAO 리팩토링 1단계로 DAO 중복 코드에 대한 이슈 제기, 라이브러리 코드와 개발자가 구현해야 하는 코드 분리, abstract 키워드를 활용해 추상 클래스 구현, INSERT, UPDATE, DELETE 문에 대한 중복 제거 과정을 다룬다.
+- https://youtu.be/zfXAZkqPH44: SELECT 쿼리에 대한 중복 코드 제거, getConnection() 메서드 중복 제거 및 테스트 코드 수정, 템플릿 메소드 패턴 적용 과정을 다룬다.
+- https://youtu.be/yEHUB97B62I: 템플릿 메소드 패턴을 활용해 JdbcTemplate과 SelectJdbcTemplate 통합, 템플릿 메소드 패턴을 활용할 때의 문제점, 각 메소드를 콜백 인터페이스로 분리해 JdbcTemplate과 SelectJdbcTemplate 통합하는 과정을 다룬다.
+
+반복적으로 발생하는 중복 로직을 상위 클래스가 구현하고 변화가 발생하는 부분만 추상 메소드로 만들어 구현하도록 하는 디자인 패턴을 템플릿 메소드(Template Method) 패턴이라고 한다.
+
 To be continued...
