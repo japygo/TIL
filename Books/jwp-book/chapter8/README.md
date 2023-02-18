@@ -37,5 +37,50 @@
 > private LocalDateTime createdDate;
 > ```
 
+### 8.2.2 답변 삭제하기 실습
+
+> ### 이슈사항 1
+> 1. 삭제 버튼 클릭 이벤트가 받기 전에 submit 되어버린다.
+> ```javascript
+> $(".qna-comment button[type=submit]").click(deleteAnswer);
+> ```
+> ### 해결방안 1
+> 1. 삭제 버튼이 동적으로 생겨 이벤트 바인딩이 되지 않아 문제였다.
+> 2. 페이지가 처음 로드될 때 존재하는 부모 요소에 바인딩 후 하위 요소에 이벤트 처리를 위임한다.
+> ```javascript
+> $(".qna-comment").on('click', '.form-delete', deleteAnswer);
+> ```
+
+> ### 이슈사항 2
+> 1. 삭제 후 처리하는 부분에서 `$(this)`가 비어있다.
+> ```javascript
+> function onSuccessDelete(json, status) {
+>   if (json.status) {
+>     $(this).closest(".article").remove();
+>   } else {
+>     alert(json.message);
+>   }
+> }
+> ```
+> ### 해결방안 2
+> 1. 삭제 후 성공 이벤트를 처리할 때 컨텍스트가 변경되어 `$(this)`가 클릭한 요소를 가질 수 없었다.
+> 2. 성공 후 처리를 같은 컨텍스트에서 하거나 클릭 할때 `this`를 파라미터로 넘겨준다.
+> ```javascript
+> $.ajax({
+>   type : 'post',
+>   url : '/api/qna/deleteAnswer',
+>   data : queryString,
+>   dataType : 'json',
+>   error : onError,
+>   success : (json, status) => {
+>     if (json.status) {
+>       $(this).closest(".article").remove();
+>     } else {
+>       alert(json.message);
+>     }
+>   }
+> });
+> ```
+
 
 To be continued...
