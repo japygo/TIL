@@ -86,6 +86,21 @@
 
 ### 8.3.1 요구사항 분리 및 힌트
 
+## 8.4 MVC 프레임워크 구현 2단계
+
+### 8.4.1 View 인터페이스 추가
+
+### 8.4.2 JspView와 JsonView 추가
+
+### 8.4.3 Controller 반환 값을 String에서 View로 수정
+
+### 8.4.4 Controller 구현체가 String 대신 View를 반환하도록 수정
+
+### 8.4.5 DispatcherServlet이 View에 작업을 위임하도록 수정
+
+경우의 수가 하나가 아닌 2개 이상이 발생하는 경우 if/else를 통해 해결할 수 있지만 그보다는 인터페이스를 통해 문제를 해결하는 것이 좀 더 확장 가능하고 깔끔한 코드를 구현할 수 있다.
+
+### 8.4.6 ModelAndView 추가를 통한 모델 추상화
 
 
 To be continued...
