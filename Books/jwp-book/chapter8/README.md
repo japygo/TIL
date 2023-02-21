@@ -102,5 +102,9 @@
 
 ### 8.4.6 ModelAndView 추가를 통한 모델 추상화
 
+## 8.5 추가 학습 자료
 
-To be continued...
+### 8.5.1 REST API 설계 및 개발
+
+- [REST API 참고 문서](https://pages.apigee.com/rs/apigee/images/api-design-ebook-2012-03.pdf)
+- [일관성 있는 웹 서비스 인터페이스 설계를 위한 REST API 디자인 규칙](http://www.yes24.com/Product/Goods/17945500)(마크 메세 저/권원상,김관래 역, 한빛미디어/2015년)
