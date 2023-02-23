@@ -5,8 +5,8 @@
 ### 목차
 
 - [소개](./1.Introduction.md)
-- 명사는 좋고, 동사는 나쁘다
-- 복수형 명사와 구체적인 이름 사용
+- [명사는 좋고, 동사는 나쁘다](./2.Nouns_are_good_verbs_are_bad.md)
+- [복수형 명사와 구체적인 이름 사용](./3.Plural_nouns_and_concrete_names.md)
 - 연관성 단순화 - 복잡성은 '?'로 묻어두기
 - 오류 처리
 - 버전 관리 팁
