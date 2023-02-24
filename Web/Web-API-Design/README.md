@@ -7,8 +7,8 @@
 - [소개](./1.Introduction.md)
 - [명사는 좋고, 동사는 나쁘다](./2.Nouns_are_good_verbs_are_bad.md)
 - [복수형 명사와 구체적인 이름 사용](./3.Plural_nouns_and_concrete_names.md)
-- 연관성 단순화 - 복잡성은 '?'로 묻어두기
-- 오류 처리
+- [연관성 단순화 - 복잡성은 '?' 뒤로 숨겨두기](./4.Simplify_associations.md)
+- [오류 처리](./5.Handling_errors.md)
 - 버전 관리 팁
 - 페이지네이션 및 부분 응답
 - 리소스가 포함되지 않은 응답은 어떻게 처리해야 할까?
