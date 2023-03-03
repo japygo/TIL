@@ -11,10 +11,10 @@
 - [오류 처리](./5.Handling_errors.md)
 - [버전 관리 팁](./6.Tips_for_versioning.md)
 - [페이지네이션 및 부분 응답](./7.Pagination_and_partial_response.md)
-- 리소스가 포함되지 않은 응답은 어떻게 처리해야 할까?
-- 다양한 형식 지원
-- 속성 이름은 어떻게 해야 할까?
-- 검색 팁
+- [리소스가 포함되지 않은 응답은 어떻게 처리해야 할까?](./8.What_about_responses_that_dont_involve_resources.md)
+- [여러 가지 형식 지원](./9.Supporting_multiple_formats.md)
+- [속성 이름은 어떻게 해야 할까?](./10.What_about_attribute_names.md)
+- [검색을 위한 팁](./11.Tips_for_search.md)
 - API 요청을 하나의 하위 도메인으로 통합
 - 예외적인 동작 처리 팁
 - 인증
