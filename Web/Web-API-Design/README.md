@@ -9,8 +9,8 @@
 - [복수형 명사와 구체적인 이름 사용](./3.Plural_nouns_and_concrete_names.md)
 - [연관성 단순화 - 복잡성은 '?' 뒤로 숨겨두기](./4.Simplify_associations.md)
 - [오류 처리](./5.Handling_errors.md)
-- 버전 관리 팁
-- 페이지네이션 및 부분 응답
+- [버전 관리 팁](./6.Tips_for_versioning.md)
+- [페이지네이션 및 부분 응답](./7.Pagination_and_partial_response.md)
 - 리소스가 포함되지 않은 응답은 어떻게 처리해야 할까?
 - 다양한 형식 지원
 - 속성 이름은 어떻게 해야 할까?
