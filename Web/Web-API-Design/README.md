@@ -15,9 +15,9 @@
 - [여러 가지 형식 지원](./9.Supporting_multiple_formats.md)
 - [속성 이름은 어떻게 해야 할까?](./10.What_about_attribute_names.md)
 - [검색을 위한 팁](./11.Tips_for_search.md)
-- API 요청을 하나의 하위 도메인으로 통합
-- 예외적인 동작 처리 팁
-- 인증
+- [API 요청을 하나의 하위 도메인으로 통합](./12.Consolidate_API_requests_in_one_subdomain.md)
+- [예외적인 동작 처리 팁](./13.Tips_for_handling_exceptional_behavior.md)
+- [인증](./14.Authentication.md)
 - API에 대한 요청 보내기
 - Chatty API
 - SDK로 보완하기
