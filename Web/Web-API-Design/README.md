@@ -18,7 +18,7 @@
 - [API 요청을 하나의 하위 도메인으로 통합](./12.Consolidate_API_requests_in_one_subdomain.md)
 - [예외적인 동작 처리 팁](./13.Tips_for_handling_exceptional_behavior.md)
 - [인증](./14.Authentication.md)
-- API에 대한 요청 보내기
-- Chatty API
-- SDK로 보완하기
+- [API에 대한 요청 보내기](./15.Making_requests_on_your_API.md)
+- [Chatty APIs](./16.Chatty_APIs.md)
+- [SDK로 보완하기](./17.Complement_with_an_SDK.md)
 - API Façade 패턴
