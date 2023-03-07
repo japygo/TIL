@@ -21,4 +21,11 @@
 - [API에 대한 요청 보내기](./15.Making_requests_on_your_API.md)
 - [Chatty APIs](./16.Chatty_APIs.md)
 - [SDK로 보완하기](./17.Complement_with_an_SDK.md)
-- API Façade 패턴
+- [API Façade 패턴](./18.The_API_Façade_Pattern.md)
+
+### 자료
+
+- [Representational State Transfer (REST), Roy Thomas Fielding](http://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm), 2000
+- [RESTful API Design Webinar](http://blog.apigee.com/detail/slides_for_restful_api_design_second_edition_webinar/), 2nd edition, Brian Mulloy, 2011
+- [Apigee API Tech & Best Practices Blog](http://blog.apigee.com/)
+- [API Craft](http://groups.google.com/group/api-craft/) Google Group
