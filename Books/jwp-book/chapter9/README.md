@@ -56,4 +56,95 @@
     데이터베이스가 존재하지 않는 상태에서도 단위 테스트가 가능하도록 구현한다.
 15. 서블릿과 같이 애노테이션을 활용해 설정을 추가하고 서버가 시작할 때 자동으로 매핑이 되도록 개선해 본다.
 
+## 9.3 자체 점검 확인
+
+### 9.3.1 서블릿 컨테이너와 MVC 프레임워크 초기화 과정(1번)
+
+1. 서블릿 컨테이너는 웹 애플리케이션의 상태를 관리하는 `ServletContext`를 생성한다.
+2. `ServletContext`가 초기화되면 컨텍스트의 초기화 이벤트가 발생한다.
+3. 등록된 `ServletContextListener`의 콜백 메소드(contextInitialized)가 호출된다.
+   이 문제에서는 `ContextLoaderListener`의 `contextInitialized()` 메소드가 호출된다.
+4. jwp.sql 파일에서 SQL문을 실행해 데이터베이스 테이블을 초기화한다.
+5. 서블릿 컨테이너는 클라이언트로부터의 최초 요청시(또는 컨테이너에 서블릿 인스턴스를 생성하도록 미리 설정을 한다면 최초 요청 전에) `DispatcherServlet` 인스턴스를 생성한다(생성자 호출).
+   이 문제에서는 `loadOnStartup` 속성이 설정되어 있기 때문에 서블릿 컨테이너가 시작하는 시점에 인스턴스를 생성한다.
+6. `DispatcherServlet` 인스턴스의 `init()` 메소드를 호출해 초기화 작업을 진행한다.
+7. `init()` 메소드 안에서 `RequestMapping` 객체를 생성한ㄷ.
+8. `RequestMapping` 인스턴스의 `initMapping()` 메소드를 호출한다.
+   `initMapping()` 메소드에서는 요청 URL과 `Controller` 인스턴스를 매핑시킨다.
+
+### 9.3.2 첫 화면에 접근했을 때 사용자 요청부터 응답까지 흐름(2번)
+
+1. `localhost:8080`으로 접근하면 요청을 처리할 서블릿에 접근하기 전에 먼저 `ResourceFilter`와 `CharacterEncodingFilter`의 `doFilter()` 메소드가 실행된다.
+   `ResourceFilter`의 경우 해당 요청이 정적 자원(CSS, 자바스크립트, 이미지) 요청이 아니기 때문에 서블릿으로 요청을 위임한다.
+2. 요청 처리는 "/"으로 매핑되어 있는 `DispatcherServlet`이므로 이 서블릿의 `service()` 메소드가 실행횐다.
+3. `service()` 메소드는 요청받은 URL을 분석해 해당 `Controller` 객체를 `RequestMapping`에서 가져온다.
+   요청 URL은 "/"이며, 이와 연결되어 있는 `HomeController`가 반환된다.
+4. `service()` 메소드는 `HomeController`의 `execute()` 메소드에게 작업을 위임한다.
+   요청에 대한 실질적인 작업은 `HomeController`의 `execute()` 메소드가 실행한다.
+   `execute()` 메소드의 반환 값은 `ModelAndView`이다.
+5. `service()` 메소드는 반환 받은 `ModelAndView`의 모델 데이터를 뷰의 `render()` 메소드에 전달한다.
+   이 요청에서 `View`는 `JspView`이다.
+   `JspView`는 `render()` 메소드로 전달된 모델 데이터를 `home.jsp`에 전달해 HTML을 생성하고, 응답함으로써 작업을 끝낸다.
+
+### 9.3.3 스택과 힙 메모리(7번)
+
+자바 프로그래밍에서 클래스의 인스턴스를 생성할 때 비용이 발생한다.
+인스턴스를 생성하고 더 이상 사용하지 않을 경우 가비지 콜렉션 과정을 통해 메모리에서 해제하는 과정 또한 비용이 발생한다.
+따라서 인스턴스를 매번 생성할 필요가 없는 경우 매번 인스턴스를 생성하지 않는 것이 성능 측면에서 더 유리하다.
+
+매 요청마다 서로 다른 상태 값을 가지지 않기 때문에 매번 인스턴스를 생성하지 않고 인스턴스 하나를 생성한 후 재사용할 수 있다.
+
+서블릿은 서블릿 컨테이너가 시작할 때 인스턴스 하나를 생성한 후 재사용한다.
+서블릿 컨테이너는 멀티스레드 환경에서 동작한다.
+즉, 멀티스레드 환경에서 여러명의 사용자가 인스턴스 하나를 재사용하고 있다.
+
+JVM은 코드를 실행하기 위해 메모리를 스택과 힙 영역으로 나눠서 관리한다.
+스택 영역은 각 메소드가 실행될 때 메소드의 인자, 로컬 변수 등을 관리하는 메모리 영역으로 각 스레드마다 서로 다른 스택 영역을 가진다.
+힙 영역은 클래스의 인스턴스 상태 데이터를 관리하는 영역이다.
+힙 영역은 스레드가 서로 공유할 수 있는 영역이다.
+
+JVM은 각 메소드별로 스택 프레임(Stack Frame)을 생성한다.
+
+- https://youtu.be/9lQsAPFQjBg: 서블릿을 잘못 구현할 경우 발생하는 문제를 보여주고 이에 대한 해결책을 제시하고 있다.
+
+### 9.3.5 싱글톤 패턴(12번)
+
+매번 인스턴스를 생성하지 않고 인스턴스 하나만 생성해 재사용하도록 강제할 수 있는 디자인 패턴이 싱글톤(singleton) 패턴이다.
+
+싱글톤 패턴을 구현하려면 먼저 클래스의 기본 생성자를 `private` 접근 제어자로 구현해 클래스 외부에서 인스턴스를 생성할 수 없도록 한다.
+인스턴스에 대한 생성은 `getInstance()`와 같은 `static` 메소드를 통해 가능하도록 허용한다.
+
+```java
+public class JdbcTemplate {
+    private static JdbcTemplate jdbcTemplate;
+    
+    private JdbcTemplate() {}
+   
+    public static JdbcTemplate getInstance() {
+        if (jdbcTemplate == null) {
+            jdbcTemplate = new JdbcTemplate();
+        }
+        return jdbcTemplate;
+    }
+}
+```
+
+위와 같이 싱글톤 패턴을 구현하는 경우 여러 개의 쓰레드가 동시에 `getInstance()` 메소드를 호출하는 경우 인스턴스가 하나 이상 생성될 수 있는 문제가 있는 코드이다.
+
+인스턴스가 하나만 생성하도록 보장하면서 간단하게 구현할 수 있는 방법은 다음과 같다.
+
+```java
+public class JdbcTemplate {
+    private static JdbcTemplate jdbcTemplate = new JdbcTemplate();
+    
+    private JdbcTemplate() {}
+   
+    public static JdbcTemplate getInstance() {
+        return jdbcTemplate;
+    }
+}
+```
+
+
+
 To be continued...
