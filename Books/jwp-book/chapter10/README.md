@@ -32,7 +32,65 @@
 
 ### 10.2.4 DispatcherServlet과 AnnotationHandlerMapping 통합
 
+## 10.3 인터페이스가 다른 경우 확장성 있는 설계
 
+## 10.4 배포 자동화를 위한 쉘 스크립트 개선
 
+### 10.4.4 동영상을 통한 배포/원복
 
-To be continued...
+- https://youtu.be/UqocnEIX-mA: 심볼릭 링크를 활용해 원복이 가능한 구조를 설계하고 이를 쉘 스크립트를 구현하는 과정
+
+```shell
+#!/bin/bash
+
+REPOSITORIES_DIR=~/repositories/jwp-basic
+TOMCAT_HOME=~/tomcat
+RELEASE_DIR=~/releases/jwp-basic
+
+cd $REPOSITORIES_DIR
+pwd
+git pull
+mvn clean package
+
+C_TIME=$(date +%s) 
+
+mv $REPOSITORIES_DIR/target/jwp-basic $RELEASE_DIR/$C_TIME
+echo "deploy source $RELEASE_DIR/$C_TIME directory"
+
+$TOMCAT_HOME/bin/shutdown.sh
+
+rm -rf $TOMCAT_HOME/webapps/ROOT
+ln -s $RELEASE_DIR/$C_TIME $TOMCAT_HOME/webapps/ROOT
+
+$TOMCAT_HOME/bin/startup.sh
+
+tail -500f $TOMCAT_HOME/logs/catalina.out
+```
+
+- https://youtu.be/7OSzN16FqCw: 서비스 배포 후 장애가 발생하는 경우 이전 버전으로 원복하는 스크립트를 작성하는 과정
+
+```shell
+#!/bin/bash
+
+RELEASES_DIR=~/releases/jwp-basic
+TOMCAT_HOME=~/tomcat
+
+RELEASES=$(ls -1tr $RELEASES_DIR)
+echo "releases : $RELEASES"
+REVISIONS=(${RELEASES//\n/})
+
+if [ "${#REVISIONS[@]}" -lt 2 ]; then
+  echo "release source length more than 2"
+else
+  echo "rollback directory : ${REVISIONS[1]}"
+
+  $TOMCAT_HOME/bin/shutdown.sh
+
+  rm -rf $TOMCAT_HOME/webapps/ROOT
+  ln -s $RELEASES_DIR/${REVISIONS[1]} $TOMCAT_HOME/webapps/ROOT
+
+  $TOMCAT_HOME/bin/startup.sh
+
+  tail -500f $TOMCAT_HOME/logs/catalina.out
+fi
+```
